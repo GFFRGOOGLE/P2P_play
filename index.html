@@ -1,0 +1,1179 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>P2P Мини-игры Pro</title>
+<style>
+  * { box-sizing: border-box; }
+  body { font-family: system-ui, sans-serif; background: #1a1a2e; color: #eee; margin: 0; padding: 20px; }
+  h1 { text-align: center; margin: 10px 0; }
+  .container { max-width: 1050px; margin: 0 auto; }
+  #menu { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin: 20px 0; }
+  #menu button { padding: 10px 16px; font-size: 14px; border: none; border-radius: 8px; cursor: pointer;
+    background: #4a4a6a; color: white; transition: 0.2s; }
+  #menu button:hover { background: #5a5a7a; }
+  #menu button.active { background: #e94560; }
+  #status { text-align: center; font-size: 18px; font-weight: bold; min-height: 26px; margin: 10px 0; }
+  #game-area { display: flex; justify-content: center; margin: 15px 0; min-height: 100px; }
+  .cell { display: flex; justify-content: center; align-items: center; cursor: pointer; user-select: none; }
+  .ttt-board { display: grid; grid-template-columns: repeat(3, 100px); grid-template-rows: repeat(3, 100px); gap: 6px; }
+  .ttt-board .cell { background: #16213e; font-size: 48px; font-weight: bold; border-radius: 8px; }
+  .ttt-board .cell.x { color: #4fc3f7; }
+  .ttt-board .cell.o { color: #e94560; }
+  .chess-board, .checkers-board { display: grid; grid-template-columns: repeat(8, 48px); grid-template-rows: repeat(8, 48px); border: 3px solid #333; }
+  .chess-board .cell, .checkers-board .cell { font-size: 32px; line-height: 1; }
+  .chess-board .light, .checkers-board .light { background: #f0d9b5; }
+  .chess-board .dark, .checkers-board .dark { background: #b58863; }
+  .cell.selected { outline: 3px solid #ffd700; outline-offset: -3px; }
+  .c4-board { display: grid; grid-template-columns: repeat(7, 50px); grid-template-rows: repeat(6, 50px);
+    gap: 4px; background: #0033cc; padding: 8px; border-radius: 10px; }
+  .c4-board .cell { background: #16213e; border-radius: 50%; }
+  .c4-board .cell.red { background: #e94560; }
+  .c4-board .cell.yellow { background: #ffd700; }
+  .bs-boards { display: flex; gap: 30px; flex-wrap: wrap; justify-content: center; }
+  .bs-board { display: grid; gap: 2px; }
+  .bs-board .cell { background: #4a90e2; border-radius: 3px; font-size: 16px; }
+  .bs-board .cell.ship { background: #555; }
+  .bs-board .cell.hit { background: #e94560; }
+  .bs-board .cell.miss { background: #888; }
+  .bs-title { text-align: center; margin: 5px 0; font-size: 14px; font-weight: bold; }
+  #settings { display: flex; gap: 15px; flex-wrap: wrap; justify-content: center; margin: 15px 0;
+    padding: 12px; background: #16213e; border-radius: 8px; }
+  #settings label { display: flex; align-items: center; gap: 6px; font-size: 14px; }
+  #settings select { padding: 6px 10px; border-radius: 6px; border: none; background: #4a4a6a; color: white; font-size: 14px; }
+  #p2p-controls { display: flex; flex-direction: column; gap: 10px; align-items: center; margin: 20px 0; }
+  #p2p-controls input { padding: 10px; border-radius: 6px; border: none; width: 260px; text-align: center; }
+  #p2p-controls button { padding: 10px 22px; border: none; border-radius: 6px; background: #e94560;
+    color: white; cursor: pointer; font-weight: bold; }
+  #p2p-controls button:disabled { background: #555; cursor: not-allowed; }
+  #p2pRow { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; align-items: center; }
+  #my-id { font-size: 12px; color: #aaa; word-break: break-all; text-align: center; min-height: 1em; }
+  .hidden { display: none !important; }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>🎮 P2P Мини-игры Pro</h1>
+  <div id="menu">
+    <button data-game="tictactoe">Крестики-нолики</button>
+    <button data-game="chess">Шахматы</button>
+    <button data-game="checkers">Русские шашки</button>
+    <button data-game="connect4">4 в ряд</button>
+    <button data-game="battleship">Морской бой</button>
+  </div>
+  <div id="settings">
+    <label>Режим:
+      <select id="mode">
+        <option value="bot">С ботом</option>
+        <option value="p2p">Онлайн P2P</option>
+      </select>
+    </label>
+    <label id="levelRow">Сложность бота:
+      <select id="level">
+        <option value="easy">Лёгкий</option>
+        <option value="medium">Средний</option>
+        <option value="hard">Сложный</option>
+      </select>
+    </label>
+    <label id="sizeRow">Размер поля (Морской бой):
+      <select id="bsSize">
+        <option value="8">8×8 (быстрый)</option>
+        <option value="10">10×10 (классика)</option>
+      </select>
+    </label>
+  </div>
+  <div id="status">Выберите игру и настройки</div>
+  <div id="game-area"></div>
+  <div id="p2p-controls">
+    <button id="startBotBtn">🤖 Играть с ботом</button>
+    <div id="p2pRow" class="hidden">
+      <button id="createBtn">Создать игру</button>
+      <input type="text" id="peerIdInput" placeholder="Введите ID игры">
+      <button id="connectBtn">Подключиться</button>
+    </div>
+  </div>
+  <div id="my-id"></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/peerjs@1.5.5/dist/peerjs.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
+<script>
+// ========== GLOBAL STATE ==========
+let peer = null, conn = null, isHost = false, isMyTurn = false;
+let selectedGame = 'tictactoe';
+let currentGame = null;
+let gameMode = 'bot';      // 'bot' | 'p2p'
+let botLevel = 'easy';     // 'easy' | 'medium' | 'hard'
+let bsSize = 8;
+
+const statusEl = document.getElementById('status');
+const gameAreaEl = document.getElementById('game-area');
+const createBtn = document.getElementById('createBtn');
+const connectBtn = document.getElementById('connectBtn');
+const startBotBtn = document.getElementById('startBotBtn');
+const peerIdInput = document.getElementById('peerIdInput');
+const myIdEl = document.getElementById('my-id');
+const p2pRow = document.getElementById('p2pRow');
+const levelRow = document.getElementById('levelRow');
+const sizeRow = document.getElementById('sizeRow');
+const modeSel = document.getElementById('mode');
+const levelSel = document.getElementById('level');
+const bsSizeSel = document.getElementById('bsSize');
+
+function setStatus(t) { statusEl.textContent = t; }
+function sendMove(data) { if (conn && conn.open) conn.send({ ...data, _g: selectedGame }); }
+function botDelay(fn) { setTimeout(fn, 350); }
+
+// ========== MENU ==========
+document.querySelectorAll('#menu button').forEach(btn => {
+  btn.onclick = () => {
+    if (conn && conn.open) return;
+    document.querySelectorAll('#menu button').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    selectedGame = btn.dataset.game;
+    updateSettingsVisibility();
+    gameAreaEl.innerHTML = '';
+    setStatus(`Выбрано: ${btn.textContent}`);
+  };
+});
+document.querySelector('#menu button').classList.add('active');
+
+modeSel.onchange = () => { gameMode = modeSel.value; updateSettingsVisibility(); };
+levelSel.onchange = () => { botLevel = levelSel.value; };
+bsSizeSel.onchange = () => { bsSize = parseInt(bsSizeSel.value); };
+
+function updateSettingsVisibility() {
+  const isP2P = modeSel.value === 'p2p';
+  const isBS = selectedGame === 'battleship';
+  levelRow.classList.toggle('hidden', isP2P);
+  p2pRow.classList.toggle('hidden', !isP2P);
+  startBotBtn.classList.toggle('hidden', isP2P);
+  sizeRow.classList.toggle('hidden', !isBS || isP2P);
+}
+
+// ========== START GAME (BOT / P2P) ==========
+startBotBtn.onclick = () => {
+  gameMode = 'bot';
+  botLevel = levelSel.value;
+  bsSize = parseInt(bsSizeSel.value);
+  isHost = true;
+  startGame(selectedGame, true);
+};
+
+createBtn.onclick = () => {
+  if (peer) return;
+  gameMode = 'p2p';
+  isHost = true;
+  peer = new Peer();
+  peer.on('open', id => {
+    myIdEl.textContent = `Ваш ID: ${id}`;
+    setStatus('Ожидание подключения игрока...');
+    createBtn.disabled = true;
+  });
+  peer.on('connection', c => {
+    conn = c;
+    setupConnection();
+    conn.on('open', () => {
+      conn.send({ type: 'start', game: selectedGame, bsSize: parseInt(bsSizeSel.value) });
+      startGame(selectedGame, true);
+    });
+  });
+  peer.on('error', err => setStatus('Ошибка: ' + err.type));
+};
+
+connectBtn.onclick = () => {
+  const id = peerIdInput.value.trim();
+  if (!id || peer) return;
+  gameMode = 'p2p';
+  isHost = false;
+  peer = new Peer();
+  peer.on('open', () => {
+    conn = peer.connect(id);
+    setupConnection();
+    setStatus('Подключение...');
+    createBtn.disabled = true;
+    connectBtn.disabled = true;
+  });
+  peer.on('error', err => setStatus('Ошибка: ' + err.type));
+};
+
+function setupConnection() {
+  conn.on('data', data => {
+    if (data.type === 'start') {
+      startGame(data.game, false, data.bsSize);
+    } else if (currentGame && currentGame.receive) {
+      currentGame.receive(data);
+    }
+  });
+  conn.on('close', () => setStatus('Соединение потеряно'));
+}
+
+function startGame(gameName, host, size) {
+  isHost = host;
+  isMyTurn = true; // в режиме бота хост начинает первым
+  if (gameName === 'battleship' && size) bsSize = size;
+  const Games = { tictactoe: TicTacToe, chess: ChessG, checkers: RussianCheckers,
+                  connect4: Connect4, battleship: Battleship };
+  currentGame = Games[gameName];
+  currentGame.init();
+  currentGame.render();
+  createBtn.disabled = true;
+  connectBtn.disabled = true;
+  startBotBtn.disabled = true;
+  peerIdInput.disabled = true;
+  modeSel.disabled = true;
+}
+
+// ========== BOT TRIGGER ==========
+function triggerBotIfNeeded() {
+  if (gameMode !== 'bot' || !currentGame || currentGame.done) return;
+  botDelay(() => {
+    if (currentGame.done) return;
+    currentGame.botMove();
+  });
+}
+
+// ========== GAME 1: TIC-TAC-TOE ==========
+const TicTacToe = {
+  board: null, mySymbol: null, done: false,
+  init() {
+    this.board = Array(9).fill('');
+    this.mySymbol = isHost ? 'X' : 'O';
+    this.done = false;
+  },
+  render() {
+    gameAreaEl.innerHTML = '<div id="board" class="ttt-board"></div>';
+    const b = document.getElementById('board');
+    this.board.forEach((v, i) => {
+      const c = document.createElement('div');
+      c.className = 'cell' + (v === 'X' ? ' x' : v === 'O' ? ' o' : '');
+      c.textContent = v;
+      c.onclick = () => this.click(i);
+      b.appendChild(c);
+    });
+    if (!this.done) setStatus(isMyTurn ? 'Ваш ход' : 'Ход противника');
+  },
+  click(i) {
+    if (this.done || !isMyTurn || this.board[i]) return;
+    this.board[i] = this.mySymbol;
+    isMyTurn = false;
+    this.render();
+    if (!this.checkWin()) {
+      if (gameMode === 'p2p') sendMove({ index: i });
+      else triggerBotIfNeeded();
+    }
+  },
+  receive(data) {
+    const opp = this.mySymbol === 'X' ? 'O' : 'X';
+    this.board[data.index] = opp;
+    isMyTurn = true;
+    this.render();
+    this.checkWin();
+  },
+  checkWin() {
+    const wins = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+    for (const [a,b,c] of wins) {
+      if (this.board[a] && this.board[a] === this.board[b] && this.board[a] === this.board[c]) {
+        this.done = true;
+        setStatus(this.board[a] === this.mySymbol ? '🎉 Вы победили!' : '😢 Вы проиграли');
+        return true;
+      }
+    }
+    if (!this.board.includes('')) { this.done = true; setStatus('Ничья'); return true; }
+    return false;
+  },
+  botMove() {
+    if (this.done) return;
+    const opp = this.mySymbol === 'X' ? 'O' : 'X';
+    let idx;
+    if (botLevel === 'easy') {
+      const free = this.board.map((v, i) => v ? null : i).filter(v => v !== null);
+      idx = free[Math.floor(Math.random() * free.length)];
+    } else if (botLevel === 'medium') {
+      idx = this.mediumMove(opp);
+    } else {
+      idx = this.minimaxMove(opp);
+    }
+    if (idx === undefined || idx === null) return;
+    this.board[idx] = opp;
+    this.render();
+    if (!this.checkWin()) isMyTurn = true;
+  },
+  mediumMove(opp) {
+    const me = this.mySymbol;
+    for (let i = 0; i < 9; i++) {
+      if (this.board[i]) continue;
+      this.board[i] = opp; if (this.checkStatic(opp)) { this.board[i] = ''; return i; }
+      this.board[i] = me; if (this.checkStatic(me)) { this.board[i] = ''; return i; }
+      this.board[i] = '';
+    }
+    if (!this.board[4]) return 4;
+    const corners = [0,2,6,8].filter(i => !this.board[i]);
+    if (corners.length) return corners[Math.floor(Math.random() * corners.length)];
+    const free = this.board.map((v, i) => v ? null : i).filter(v => v !== null);
+    return free[Math.floor(Math.random() * free.length)];
+  },
+  checkStatic(sym) {
+    const w = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+    return w.some(([a,b,c]) => this.board[a]===sym && this.board[b]===sym && this.board[c]===sym);
+  },
+  minimaxMove(opp) {
+    const me = this.mySymbol;
+    let bestScore = -Infinity, bestMove = null;
+    for (let i = 0; i < 9; i++) {
+      if (this.board[i]) continue;
+      this.board[i] = opp;
+      const s = this.minimax(false, opp, me, 1);
+      this.board[i] = '';
+      if (s > bestScore) { bestScore = s; bestMove = i; }
+    }
+    return bestMove;
+  },
+  minimax(isMaximizing, opp, me, depth) {
+    if (this.checkStatic(opp)) return 10 - depth;
+    if (this.checkStatic(me)) return depth - 10;
+    if (!this.board.includes('')) return 0;
+    let best = isMaximizing ? -Infinity : Infinity;
+    for (let i = 0; i < 9; i++) {
+      if (this.board[i]) continue;
+      this.board[i] = isMaximizing ? opp : me;
+      const s = this.minimax(!isMaximizing, opp, me, depth + 1);
+      this.board[i] = '';
+      best = isMaximizing ? Math.max(best, s) : Math.min(best, s);
+    }
+    return best;
+  }
+};
+
+// ========== GAME 2: CHESS ==========
+const ChessG = {
+  game: null, selected: null, done: false,
+  init() { this.game = new Chess(); this.selected = null; this.done = false; },
+  myColor() { return isHost ? 'w' : 'b'; },
+  render() {
+    gameAreaEl.innerHTML = '<div id="board" class="chess-board"></div>';
+    const b = document.getElementById('board');
+    const board = this.game.board();
+    const sym = {p:'♟',n:'♞',b:'♝',r:'♜',q:'♛',k:'♚',P:'♙',N:'♘',B:'♗',R:'♖',Q:'♕',K:'♔'};
+    const flip = this.myColor() === 'b';
+    for (let rr = 0; rr < 8; rr++) for (let cc = 0; cc < 8; cc++) {
+      const r = flip ? 7 - rr : rr;
+      const c = flip ? 7 - cc : cc;
+      const p = board[r][c];
+      const cell = document.createElement('div');
+      cell.className = 'cell ' + ((r + c) % 2 === 0 ? 'light' : 'dark');
+      if (p) {
+        cell.textContent = sym[p.color === 'w' ? p.type.toUpperCase() : p.type];
+        cell.style.color = p.color === 'w' ? '#fff' : '#111';
+        cell.style.textShadow = p.color === 'w' ? '0 0 2px #000' : '0 0 2px #fff';
+      }
+      if (this.selected && this.selected.r === r && this.selected.c === c) cell.classList.add('selected');
+      cell.onclick = () => this.click(r, c);
+      b.appendChild(cell);
+    }
+    if (!this.done) {
+      let s = isMyTurn ? 'Ваш ход' : 'Ход противника';
+      if (this.game.in_check()) s += ' (шах!)';
+      setStatus(s);
+    }
+  },
+  click(r, c) {
+    if (this.done || !isMyTurn) return;
+    if (this.selected) {
+      const from = String.fromCharCode(97 + this.selected.c) + (8 - this.selected.r);
+      const to = String.fromCharCode(97 + c) + (8 - r);
+      try {
+        if (this.game.move({ from, to, promotion: 'q' })) {
+          this.selected = null;
+          isMyTurn = false;
+          this.render();
+          if (!this.checkEnd()) {
+            if (gameMode === 'p2p') sendMove({ from, to, promotion: 'q' });
+            else triggerBotIfNeeded();
+          }
+          return;
+        }
+      } catch(e) {}
+    }
+    const piece = this.game.get(String.fromCharCode(97 + c) + (8 - r));
+    this.selected = (piece && piece.color === this.myColor()) ? { r, c } : null;
+    this.render();
+  },
+  receive(data) {
+    try { this.game.move(data); } catch(e) {}
+    isMyTurn = true;
+    this.render();
+    this.checkEnd();
+  },
+  checkEnd() {
+    if (this.game.in_checkmate()) {
+      this.done = true;
+      setStatus(this.game.turn() === this.myColor() ? '😢 Мат! Вы проиграли' : '🎉 Мат! Вы победили');
+      return true;
+    }
+    if (this.game.in_draw() || this.game.in_stalemate() || this.game.in_threefold_repetition()) {
+      this.done = true; setStatus('Ничья'); return true;
+    }
+    return false;
+  },
+  botMove() {
+    if (this.done) return;
+    const moves = this.game.moves({verbose: true});
+    if (moves.length === 0) return;
+    let chosen;
+    if (botLevel === 'easy') {
+      chosen = moves[Math.floor(Math.random() * moves.length)];
+    } else {
+      const botColor = this.myColor() === 'w' ? 'b' : 'w';
+      const depth = botLevel === 'medium' ? 1 : 2;
+      chosen = this.findBest(moves, depth, botColor);
+    }
+    this.game.move(chosen);
+    this.render();
+    if (!this.checkEnd()) isMyTurn = true;
+  },
+  findBest(moves, depth, botColor) {
+    const botIsWhite = botColor === 'w';
+    let best = moves[0];
+    let bestScore = botIsWhite ? -Infinity : Infinity;
+    for (const m of moves) {
+      this.game.move(m);
+      const score = this.minimax(depth - 1, !botIsWhite);
+      this.game.undo();
+      if (botIsWhite ? score > bestScore : score < bestScore) {
+        bestScore = score; best = m;
+      }
+    }
+    return best;
+  },
+  minimax(depth, isWhiteTurn) {
+    if (depth <= 0 || this.game.game_over()) {
+      return this.evaluate();
+    }
+    const moves = this.game.moves();
+    if (moves.length === 0) return this.evaluate();
+    if (isWhiteTurn) {
+      let best = -Infinity;
+      for (const m of moves) { this.game.move(m); best = Math.max(best, this.minimax(depth-1, false)); this.game.undo(); }
+      return best;
+    } else {
+      let best = Infinity;
+      for (const m of moves) { this.game.move(m); best = Math.min(best, this.minimax(depth-1, true)); this.game.undo(); }
+      return best;
+    }
+  },
+  evaluate() {
+    if (this.game.in_checkmate()) return this.game.turn() === 'w' ? -100000 : 100000;
+    if (this.game.in_draw() || this.game.in_stalemate()) return 0;
+    const vals = {p:100, n:320, b:330, r:500, q:900, k:20000};
+    const board = this.game.board();
+    let s = 0;
+    for (let r = 0; r < 8; r++) for (let c = 0; c < 8; c++) {
+      const p = board[r][c];
+      if (p) s += (p.color === 'w' ? 1 : -1) * vals[p.type];
+    }
+    return s;
+  }
+};
+
+// ========== GAME 3: РУССКИЕ ШАШКИ ==========
+const RussianCheckers = {
+  board: null, selected: null, done: false, mustCapture: false, captureChain: null,
+
+  init() {
+    this.board = Array(8).fill(null).map(() => Array(8).fill(null));
+    for (let r = 0; r < 3; r++) for (let c = 0; c < 8; c++)
+      if ((r + c) % 2 === 1) this.board[r][c] = { color: 'b', king: false };
+    for (let r = 5; r < 8; r++) for (let c = 0; c < 8; c++)
+      if ((r + c) % 2 === 1) this.board[r][c] = { color: 'w', king: false };
+    this.selected = null; this.done = false; this.mustCapture = false; this.captureChain = null;
+  },
+  myColor() { return isHost ? 'w' : 'b'; },
+
+  getCaptures(r, c) {
+    const p = this.board[r][c];
+    if (!p) return [];
+    const dirs = [[-1,-1],[-1,1],[1,-1],[1,1]];
+    const caps = [];
+    for (const [dr, dc] of dirs) {
+      if (p.king) {
+        let mr = r + dr, mc = c + dc, found = false, enemyR = -1, enemyC = -1;
+        while (mr >= 0 && mr < 8 && mc >= 0 && mc < 8) {
+          if (this.board[mr][mc]) {
+            if (this.board[mr][mc].color !== p.color && !found) { found = true; enemyR = mr; enemyC = mc; }
+            else break;
+          }
+          mr += dr; mc += dc;
+        }
+        if (found) {
+          let landR = enemyR + dr, landC = enemyC + dc;
+          while (landR >= 0 && landR < 8 && landC >= 0 && landC < 8 && !this.board[landR][landC]) {
+            caps.push({ r: landR, c: landC, cr: enemyR, cc: enemyC });
+            landR += dr; landC += dc;
+          }
+        }
+      } else {
+        const mr = r + dr, mc = c + dc, nr = r + dr*2, nc = c + dc*2;
+        if (nr >= 0 && nr < 8 && nc >= 0 && nc < 8) {
+          const mid = this.board[mr][mc];
+          if (mid && mid.color !== p.color && !this.board[nr][nc])
+            caps.push({ r: nr, c: nc, cr: mr, cc: mc });
+        }
+      }
+    }
+    return caps;
+  },
+  getAllCaptures(color) {
+    const all = [];
+    for (let r = 0; r < 8; r++) for (let c = 0; c < 8; c++) {
+      const p = this.board[r][c];
+      if (p && p.color === color) for (const cap of this.getCaptures(r, c))
+        all.push({ from: {r, c}, ...cap });
+    }
+    return all;
+  },
+  getMoves(r, c) {
+    const p = this.board[r][c];
+    if (!p) return [];
+    const dirs = [];
+    if (p.king) dirs.push([-1,-1],[-1,1],[1,-1],[1,1]);
+    else if (p.color === 'w') dirs.push([-1,-1],[-1,1]);
+    else dirs.push([1,-1],[1,1]);
+    const moves = [];
+    for (const [dr, dc] of dirs) {
+      if (p.king) {
+        let nr = r + dr, nc = c + dc;
+        while (nr >= 0 && nr < 8 && nc >= 0 && nc < 8 && !this.board[nr][nc]) {
+          moves.push({ r: nr, c: nc });
+          nr += dr; nc += dc;
+        }
+      } else {
+        const nr = r + dr, nc = c + dc;
+        if (nr >= 0 && nr < 8 && nc >= 0 && nc < 8 && !this.board[nr][nc]) moves.push({ r: nr, c: nc });
+      }
+    }
+    return moves;
+  },
+  render() {
+    gameAreaEl.innerHTML = '<div id="board" class="checkers-board"></div>';
+    const b = document.getElementById('board');
+    const flip = this.myColor() === 'b';
+    for (let rr = 0; rr < 8; rr++) for (let cc = 0; cc < 8; cc++) {
+      const r = flip ? 7 - rr : rr, c = flip ? 7 - cc : cc;
+      const p = this.board[r][c];
+      const cell = document.createElement('div');
+      cell.className = 'cell ' + ((r + c) % 2 === 0 ? 'light' : 'dark');
+      if (p) {
+        const sp = document.createElement('span');
+        sp.style.cssText = 'width:72%;height:72%;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:bold;';
+        sp.style.background = p.color === 'w' ? '#fff' : '#222';
+        sp.style.color = p.color === 'w' ? '#222' : '#fff';
+        sp.style.border = '2px solid ' + (p.color === 'w' ? '#222' : '#fff');
+        if (p.king) sp.textContent = '♛';
+        cell.appendChild(sp);
+      }
+      if (this.selected && this.selected.r === r && this.selected.c === c) cell.classList.add('selected');
+      cell.onclick = () => this.click(r, c);
+      b.appendChild(cell);
+    }
+    if (!this.done) {
+      if (this.captureChain) setStatus('Продолжайте взятие!');
+      else if (this.mustCapture) setStatus('Обязательное взятие!');
+      else setStatus(isMyTurn ? 'Ваш ход' : 'Ход противника');
+    }
+  },
+  click(r, c) {
+    if (this.done || !isMyTurn) return;
+    if (this.captureChain && (this.captureChain.r !== r || this.captureChain.c !== c)) return;
+    if (!this.captureChain) {
+      const allCaps = this.getAllCaptures(this.myColor());
+      this.mustCapture = allCaps.length > 0;
+    }
+    if (this.selected) {
+      const sel = this.selected, piece = this.board[sel.r][sel.c];
+      const caps = this.getCaptures(sel.r, sel.c);
+      const capMove = caps.find(m => m.r === r && m.c === c);
+      if (capMove) {
+        this.board[sel.r][sel.c] = null;
+        this.board[capMove.cr][capMove.cc] = null;
+        this.board[r][c] = piece;
+        if (!piece.king && ((piece.color === 'w' && r === 0) || (piece.color === 'b' && r === 7))) piece.king = true;
+        this.selected = null; this.render();
+        const more = this.getCaptures(r, c);
+        if (more.length > 0) {
+          this.captureChain = { r, c };
+          this.render();
+          setStatus('Продолжайте взятие!');
+          return;
+        }
+        this.captureChain = null; this.mustCapture = false; isMyTurn = false;
+        this.render();
+        if (!this.checkEnd()) {
+          if (gameMode === 'p2p') sendMove({ from: {r: sel.r, c: sel.c}, to: {r, c}, capture: {r: capMove.cr, c: capMove.cc} });
+          else triggerBotIfNeeded();
+        }
+        return;
+      }
+      if (!this.mustCapture) {
+        const mv = this.getMoves(sel.r, sel.c).find(m => m.r === r && m.c === c);
+        if (mv) {
+          this.board[sel.r][sel.c] = null;
+          this.board[r][c] = piece;
+          if (!piece.king && ((piece.color === 'w' && r === 0) || (piece.color === 'b' && r === 7))) piece.king = true;
+          this.selected = null; isMyTurn = false;
+          this.render();
+          if (!this.checkEnd()) {
+            if (gameMode === 'p2p') sendMove({ from: {r: sel.r, c: sel.c}, to: {r, c} });
+            else triggerBotIfNeeded();
+          }
+          return;
+        }
+      }
+    }
+    const p = this.board[r][c];
+    if (p && p.color === this.myColor()) {
+      if (this.mustCapture && this.getCaptures(r, c).length === 0) {
+        setStatus('Эта шашка не может бить. Выберите другую.');
+        return;
+      }
+      this.selected = { r, c };
+    } else this.selected = null;
+    this.render();
+  },
+  receive(data) {
+    const { from, to, capture } = data;
+    const piece = this.board[from.r][from.c];
+    this.board[from.r][from.c] = null;
+    if (capture) this.board[capture.r][capture.c] = null;
+    this.board[to.r][to.c] = piece;
+    if (!piece.king && ((piece.color === 'w' && to.r === 0) || (piece.color === 'b' && to.r === 7))) piece.king = true;
+    isMyTurn = true; this.mustCapture = false; this.captureChain = null;
+    this.render();
+    this.checkEnd();
+  },
+  checkEnd() {
+    let w = 0, b = 0;
+    for (let r = 0; r < 8; r++) for (let c = 0; c < 8; c++) {
+      const p = this.board[r][c];
+      if (p) p.color === 'w' ? w++ : b++;
+    }
+    const my = this.myColor() === 'w' ? w : b;
+    const opp = this.myColor() === 'w' ? b : w;
+    if (opp === 0) { this.done = true; setStatus('🎉 Вы победили!'); return true; }
+    if (my === 0) { this.done = true; setStatus('😢 Вы проиграли'); return true; }
+    return false;
+  },
+  botMove() {
+    if (this.done) return;
+    const botColor = this.myColor() === 'w' ? 'b' : 'w';
+    const caps = this.getAllCaptures(botColor);
+    const allMoves = [];
+    if (caps.length > 0) allMoves.push(...caps.map(c => ({...c, isCapture: true})));
+    else {
+      for (let r = 0; r < 8; r++) for (let c = 0; c < 8; c++) {
+        const p = this.board[r][c];
+        if (p && p.color === botColor) for (const m of this.getMoves(r, c))
+          allMoves.push({ from: {r, c}, ...m, isCapture: false });
+      }
+    }
+    if (allMoves.length === 0) return;
+    let chosen;
+    if (botLevel === 'easy') chosen = allMoves[Math.floor(Math.random() * allMoves.length)];
+    else if (botLevel === 'medium') {
+      chosen = allMoves.reduce((best, m) => {
+        const score = (m.isCapture ? 10 : 0) + (m.r < 4 ? 1 : 0);
+        return (!best || score > best.score) ? { m, score } : best;
+      }, null).m;
+    } else {
+      // Hard: жадный + избегание подстав
+      let best = null, bestScore = -Infinity;
+      for (const m of allMoves) {
+        const sim = this.cloneBoard();
+        this.applyMove(m, sim);
+        let score = (m.isCapture ? 15 : 0);
+        // проверка: не подставляемся ли под удар
+        this.board = sim;
+        const oppColor = botColor === 'w' ? 'b' : 'w';
+        const oppCaps = this.getAllCaptures(oppColor);
+        if (oppCaps.length > 0) score -= 8;
+        this.board = this._origBoard;
+        if (score > bestScore) { bestScore = score; best = m; }
+      }
+      if (!best) best = allMoves[0];
+      chosen = best;
+    }
+    this._origBoard = this.board;
+    this.executeBotMove(chosen, botColor);
+  },
+  cloneBoard() { return this.board.map(row => row.map(c => c ? { ...c } : null)); },
+  applyMove(m, board) {
+    const piece = board[m.from.r][m.from.c];
+    board[m.from.r][m.from.c] = null;
+    if (m.cr !== undefined) board[m.cr][m.cc] = null;
+    board[m.r][m.c] = piece;
+    if (!piece.king && ((piece.color === 'w' && m.r === 0) || (piece.color === 'b' && m.r === 7))) piece.king = true;
+  },
+  executeBotMove(m, color) {
+    const piece = this.board[m.from.r][m.from.c];
+    this.board[m.from.r][m.from.c] = null;
+    if (m.cr !== undefined) this.board[m.cr][m.cc] = null;
+    this.board[m.r][m.c] = piece;
+    if (!piece.king && ((piece.color === 'w' && m.r === 0) || (piece.color === 'b' && m.r === 7))) piece.king = true;
+    // Цепочка взятий
+    if (m.isCapture) {
+      const further = this.getCaptures(m.r, m.c);
+      if (further.length > 0) {
+        this.render();
+        botDelay(() => {
+          if (this.done) return;
+          const next = further[Math.floor(Math.random() * further.length)];
+          this.executeBotMove({ from: {r: m.r, c: m.c}, ...next, isCapture: true }, color);
+        });
+        return;
+      }
+    }
+    this.render();
+    if (!this.checkEnd()) isMyTurn = true;
+  }
+};
+
+// ========== GAME 4: CONNECT 4 ==========
+const Connect4 = {
+  board: null, mySymbol: null, done: false,
+  init() {
+    this.board = Array(6).fill(null).map(() => Array(7).fill(''));
+    this.mySymbol = isHost ? 'R' : 'Y';
+    this.done = false;
+  },
+  render() {
+    gameAreaEl.innerHTML = '<div id="board" class="c4-board"></div>';
+    const b = document.getElementById('board');
+    for (let r = 0; r < 6; r++) for (let c = 0; c < 7; c++) {
+      const cell = document.createElement('div');
+      cell.className = 'cell';
+      if (this.board[r][c] === 'R') cell.classList.add('red');
+      if (this.board[r][c] === 'Y') cell.classList.add('yellow');
+      cell.onclick = () => this.click(c);
+      b.appendChild(cell);
+    }
+    if (!this.done) setStatus(isMyTurn ? 'Ваш ход' : 'Ход противника');
+  },
+  click(c) {
+    if (this.done || !isMyTurn) return;
+    let r = -1;
+    for (let i = 5; i >= 0; i--) if (!this.board[i][c]) { r = i; break; }
+    if (r === -1) return;
+    this.board[r][c] = this.mySymbol;
+    isMyTurn = false;
+    this.render();
+    if (!this.checkWin(r, c)) {
+      if (gameMode === 'p2p') sendMove({ col: c });
+      else triggerBotIfNeeded();
+    }
+  },
+  receive(data) {
+    const c = data.col;
+    let r = -1;
+    for (let i = 5; i >= 0; i--) if (!this.board[i][c]) { r = i; break; }
+    if (r === -1) return;
+    this.board[r][c] = this.mySymbol === 'R' ? 'Y' : 'R';
+    isMyTurn = true;
+    this.render();
+    this.checkWin(r, c);
+  },
+  checkWin(r, c) {
+    const color = this.board[r][c]; if (!color) return false;
+    const dirs = [[0,1],[1,0],[1,1],[1,-1]];
+    for (const [dr, dc] of dirs) {
+      let count = 1;
+      for (let s = 1; s < 4; s++) {
+        const nr = r + dr*s, nc = c + dc*s;
+        if (nr<0||nr>=6||nc<0||nc>=7||this.board[nr][nc]!==color) break;
+        count++;
+      }
+      for (let s = 1; s < 4; s++) {
+        const nr = r - dr*s, nc = c - dc*s;
+        if (nr<0||nr>=6||nc<0||nc>=7||this.board[nr][nc]!==color) break;
+        count++;
+      }
+      if (count >= 4) {
+        this.done = true;
+        setStatus(color === this.mySymbol ? '🎉 Вы победили!' : '😢 Вы проиграли');
+        return true;
+      }
+    }
+    if (this.board[0].every(v => v)) { this.done = true; setStatus('Ничья'); return true; }
+    return false;
+  },
+  botMove() {
+    if (this.done) return;
+    const opp = this.mySymbol === 'R' ? 'Y' : 'R';
+    let col;
+    if (botLevel === 'easy') {
+      const free = [];
+      for (let c = 0; c < 7; c++) if (!this.board[0][c]) free.push(c);
+      col = free[Math.floor(Math.random() * free.length)];
+    } else if (botLevel === 'medium') {
+      col = this.mediumMove(opp);
+    } else {
+      col = this.minimaxMove(opp);
+    }
+    if (col === undefined) return;
+    let r = -1;
+    for (let i = 5; i >= 0; i--) if (!this.board[i][col]) { r = i; break; }
+    if (r === -1) return;
+    this.board[r][col] = opp;
+    this.render();
+    if (!this.checkWin(r, col)) isMyTurn = true;
+  },
+  mediumMove(opp) {
+    const me = this.mySymbol;
+    for (const sym of [opp, me]) {
+      for (let c = 0; c < 7; c++) {
+        if (this.board[0][c]) continue;
+        let r = -1;
+        for (let i = 5; i >= 0; i--) if (!this.board[i][c]) { r = i; break; }
+        this.board[r][c] = sym;
+        if (this.checkFour(r, c, sym)) { this.board[r][c] = ''; return c; }
+        this.board[r][c] = '';
+      }
+    }
+    const center = [3,2,4,1,5,0,6].find(c => !this.board[0][c]);
+    return center;
+  },
+  checkFour(r, c, sym) {
+    const dirs = [[0,1],[1,0],[1,1],[1,-1]];
+    for (const [dr, dc] of dirs) {
+      let count = 1;
+      for (let s = 1; s < 4; s++) {
+        const nr = r+dr*s, nc = c+dc*s;
+        if (nr<0||nr>=6||nc<0||nc>=7||this.board[nr][nc]!==sym) break;
+        count++;
+      }
+      for (let s = 1; s < 4; s++) {
+        const nr = r-dr*s, nc = c-dc*s;
+        if (nr<0||nr>=6||nc<0||nc>=7||this.board[nr][nc]!==sym) break;
+        count++;
+      }
+      if (count >= 4) return true;
+    }
+    return false;
+  },
+  minimaxMove(opp) {
+    let bestScore = -Infinity, bestCol = 3;
+    for (let c = 0; c < 7; c++) {
+      if (this.board[0][c]) continue;
+      let r = -1;
+      for (let i = 5; i >= 0; i--) if (!this.board[i][c]) { r = i; break; }
+      this.board[r][c] = opp;
+      const score = this.minimax(3, false, opp, this.mySymbol);
+      this.board[r][c] = '';
+      if (score > bestScore) { bestScore = score; bestCol = c; }
+    }
+    return bestCol;
+  },
+  minimax(depth, isMax, opp, me) {
+    if (depth === 0) return this.evalBoard(opp, me);
+    let best = isMax ? -Infinity : Infinity;
+    for (let c = 0; c < 7; c++) {
+      if (this.board[0][c]) continue;
+      let r = -1;
+      for (let i = 5; i >= 0; i--) if (!this.board[i][c]) { r = i; break; }
+      const sym = isMax ? opp : me;
+      this.board[r][c] = sym;
+      if (this.checkFour(r, c, sym)) {
+        this.board[r][c] = '';
+        return isMax ? 100000 : -100000;
+      }
+      const s = this.minimax(depth - 1, !isMax, opp, me);
+      this.board[r][c] = '';
+      best = isMax ? Math.max(best, s) : Math.min(best, s);
+    }
+    return best;
+  },
+  evalBoard(opp, me) {
+    let score = 0;
+    for (let r = 0; r < 6; r++) for (let c = 0; c < 7; c++) {
+      if (this.board[r][c] === opp) score += 1;
+      else if (this.board[r][c] === me) score -= 1;
+    }
+    return score;
+  }
+};
+
+// ========== GAME 5: BATTLESHIP ==========
+const Battleship = {
+  shipsAtMe: null, shotsAtMe: null, shotsByMe: null, done: false,
+  placing: false, placingIndex: 0, placingDir: 'h', placedShips: [],
+  botQueue: [],
+
+  get SIZE() { return bsSize; },
+  get shipSizes() {
+    // классический флот: 1×4, 2×3, 3×2, 4×1
+    return [4, 3, 3, 2, 2, 2, 1, 1, 1, 1];
+  },
+
+  init() {
+    const S = this.SIZE;
+    this.shipsAtMe = Array(S).fill(null).map(() => Array(S).fill(false));
+    this.shotsAtMe = Array(S).fill(null).map(() => Array(S).fill(''));
+    this.shotsByMe = Array(S).fill(null).map(() => Array(S).fill(''));
+    this.done = false;
+    this.placing = true;
+    this.placingIndex = 0;
+    this.placingDir = 'h';
+    this.placedShips = [];
+    this.botQueue = [];
+    this.render();
+  },
+
+  canPlace(r, c, size, horiz, board) {
+    const S = this.SIZE;
+    for (let i = 0; i < size; i++) {
+      const rr = r + (horiz ? 0 : i), cc = c + (horiz ? i : 0);
+      if (rr < 0 || rr >= S || cc < 0 || cc >= S) return false;
+      if (board[rr][cc]) return false;
+      for (let dr = -1; dr <= 1; dr++) for (let dc = -1; dc <= 1; dc++) {
+        const nr = rr + dr, nc = cc + dc;
+        if (nr >= 0 && nr < S && nc >= 0 && nc < S && board[nr][nc]) return false;
+      }
+    }
+    return true;
+  },
+
+  randomPlace() {
+    const S = this.SIZE;
+    this.shipsAtMe = Array(S).fill(null).map(() => Array(S).fill(false));
+    this.placedShips = [];
+    for (const size of this.shipSizes) {
+      let placed = false, tries = 0;
+      while (!placed && tries < 1000) {
+        tries++;
+        const horiz = Math.random() < 0.5;
+        const r = Math.floor(Math.random() * (horiz ? S : S - size + 1));
+        const c = Math.floor(Math.random() * (horiz ? S - size + 1 : S));
+        if (this.canPlace(r, c, size, horiz, this.shipsAtMe)) {
+          for (let i = 0; i < size; i++) {
+            const rr = r + (horiz ? 0 : i), cc = c + (horiz ? i : 0);
+            this.shipsAtMe[rr][cc] = true;
+          }
+          this.placedShips.push({ r, c, size, horiz });
+          placed = true;
+        }
+      }
+    }
+  },
+
+  clickPlace(r, c) {
+    if (!this.placing) return;
+    const size = this.shipSizes[this.placingIndex];
+    if (this.canPlace(r, c, size, this.placingDir === 'h', this.shipsAtMe)) {
+      for (let i = 0; i < size; i++) {
+        const rr = r + (this.placingDir === 'h' ? 0 : i);
+        const cc = c + (this.placingDir === 'h' ? i : 0);
+        this.shipsAtMe[rr][cc] = true;
+      }
+      this.placedShips.push({ r, c, size, horiz: this.placingDir === 'h' });
+      this.placingIndex++;
+      if (this.placingIndex >= this.shipSizes.length) {
+        this.finishPlacement();
+        return;
+      }
+    }
+    this.render();
+  },
+
+  finishPlacement() {
+    this.placing = false;
+    if (gameMode === 'p2p') {
+      sendMove({ type: 'placement', ships: this.placedShips });
+      if (isMyTurn) this.render();
+      else setStatus('Ожидание расстановки противника...');
+    } else {
+      isMyTurn = true;
+      this.render();
+    }
+  },
+
+  render() {
+    const S = this.SIZE;
+    const cellSize = S === 8 ? 36 : 30;
+    if (this.placing) {
+      const size = this.shipSizes[this.placingIndex];
+      const dirText = this.placingDir === 'h' ? 'горизонтально' : 'вертикально';
+      gameAreaEl.innerHTML = `
+        <div style="text-align:center">
+          <div style="margin-bottom:10px">Расставьте корабль <b>${size}</b> (${dirText}) — осталось ${this.shipSizes.length - this.placingIndex}</div>
+          <button id="toggleDir" style="padding:8px 16px;margin:0 5px 10px;border:none;border-radius:6px;background:#4a4a6a;color:white;cursor:pointer">Повернуть</button>
+          <button id="randomBtn" style="padding:8px 16px;margin:0 5px 10px;border:none;border-radius:6px;background:#4a4a6a;color:white;cursor:pointer">Случайно</button>
+          <div id="place-board" class="bs-board" style="margin:0 auto;width:fit-content;grid-template-columns:repeat(${S},${cellSize}px);grid-template-rows:repeat(${S},${cellSize}px)"></div>
+        </div>`;
+      document.getElementById('toggleDir').onclick = () => { this.placingDir = this.placingDir === 'h' ? 'v' : 'h'; this.render(); };
+      document.getElementById('randomBtn').onclick = () => { this.randomPlace(); this.finishPlacement(); };
+      const pb = document.getElementById('place-board');
+      for (let r = 0; r < S; r++) for (let c = 0; c < S; c++) {
+        const cell = document.createElement('div');
+        cell.className = 'cell';
+        if (this.shipsAtMe[r][c]) cell.classList.add('ship');
+        cell.onclick = () => this.clickPlace(r, c);
+        pb.appendChild(cell);
+      }
+      return;
+    }
+    gameAreaEl.innerHTML = `
+      <div class="bs-boards">
+        <div><div class="bs-title">Ваши корабли</div><div id="my-bs" class="bs-board" style="grid-template-columns:repeat(${S},${cellSize}px);grid-template-rows:repeat(${S},${cellSize}px)"></div></div>
+        <div><div class="bs-title">Поле противника</div><div id="en-bs" class="bs-board" style="grid-template-columns:repeat(${S},${cellSize}px);grid-template-rows:repeat(${S},${cellSize}px)"></div></div>
+      </div>`;
+    const mb = document.getElementById('my-bs');
+    const eb = document.getElementById('en-bs');
+    for (let r = 0; r < S; r++) for (let c = 0; c < S; c++) {
+      const mc = document.createElement('div');
+      mc.className = 'cell';
+      if (this.shipsAtMe[r][c]) mc.classList.add('ship');
+      const st = this.shotsAtMe[r][c];
+      if (st === 'hit') { mc.classList.add('hit'); mc.textContent = '💥'; }
+      else if (st === 'miss') { mc.classList.add('miss'); mc.textContent = '·'; }
+      mb.appendChild(mc);
+      const ec = document.createElement('div');
+      ec.className = 'cell';
+      const sb = this.shotsByMe[r][c];
+      if (sb === 'hit') { ec.classList.add('hit'); ec.textContent = '💥'; }
+      else if (sb === 'miss') { ec.classList.add('miss'); ec.textContent = '·'; }
+      ec.onclick = () => this.click(r, c);
+      eb.appendChild(ec);
+    }
+    if (!this.done) setStatus(isMyTurn ? 'Ваш выстрел' : 'Ход противника');
+  },
+
+  click(r, c) {
+    if (this.placing || this.done || !isMyTurn || this.shotsByMe[r][c]) return;
+    if (gameMode === 'p2p') {
+      sendMove({ fire: { r, c } });
+      isMyTurn = false;
+      setStatus('Ожидание результата...');
+    } else {
+      // В режиме бота: делаем выстрел и вызываем ответ бота
+      this.playerFire(r, c);
+      if (!this.done) triggerBotIfNeeded();
+    }
+  },
+
+  playerFire(r, c) {
+    // Проверяем попадание по кораблям бота (у бота свои shipsBot, но мы используем shipsAtMe как общий контейнер для его доски)
+    // В режиме бота "доска противника" хранится в this.shipsBot
+    const hit = this.shipsBot ? this.shipsBot[r][c] : false;
+    this.shotsByMe[r][c] = hit ? 'hit' : 'miss';
+    let allSunk = true;
+    if (this.shipsBot) {
+      for (let rr = 0; rr < this.SIZE; rr++) for (let cc = 0; cc < this.SIZE; cc++)
+        if (this.shipsBot[rr][cc] && this.shotsByMe[rr][cc] !== 'hit') allSunk = false;
+    }
+    if (allSunk && this.shipsBot) { this.done = true; setStatus('🎉 Вы победили!'); }
+    else if (hit) setStatus('Попадание! Стреляйте ещё');
+    else { setStatus('Промах. Ход противника'); isMyTurn = false; }
+    this.render();
+  },
+
+  receive(data) {
+    if (data.type === 'placement') {
+      this.placing = false;
+      this.render();
+      return;
+    }
+    if (data.fire) {
+      const { r, c } = data.fire;
+      const hit = this.shipsAtMe[r][c];
+      this.shotsAtMe[r][c] = hit ? 'hit' : 'miss';
+      let allSunk = true;
+      for (let rr = 0; rr < this.SIZE; rr++) for (let cc = 0; cc < this.SIZE; cc++)
+        if (this.shipsAtMe[rr][cc] && this.shotsAtMe[rr][cc] !== 'hit') allSunk = false;
+      sendMove({ result: { r, c, hit, gameOver: allSunk } });
+      if (allSunk) { this.done = true; setStatus('😢 Все ваши корабли потоплены'); }
+      else isMyTurn = !hit;
+      this.render();
+    } else if (data.result) {
+      const { r, c, hit, gameOver } = data.result;
+      this.shotsByMe[r][c] = hit ? 'hit' : 'miss';
+      if (gameOver) { this.done = true; setStatus('🎉 Вы победили!'); }
+      else isMyTurn = hit;
+      this.render();
+    }
+  },
+
+  botMove() {
+    if (this.done) return;
+    const S = this.SIZE;
+    // Инициализация доски бота (один раз)
+    if (!this.shipsBot) {
+      this.shipsBot = Array(S).fill(null).map(() => Array(S).fill(false));
+      for (const size of this.shipSizes) {
+        let placed = false, tries = 0;
+        while (!placed && tries < 1000) {
+          tries++;
+          const horiz = Math.random() < 0.5;
+          const r = Math.floor(Math.random() * (horiz ? S : S - size + 1));
+          const c = Math.floor(Math.random() * (horiz ? S - size + 1 : S));
+          if (this.canPlace(r, c, size, horiz, this.shipsBot)) {
+            for (let i = 0; i < size; i++) {
+              const rr = r + (horiz ? 0 : i), cc = c + (horiz ? i : 0);
+              this.shipsBot[rr][cc] = true;
+            }
+            placed = true;
+          }
+        }
+      }
+    }
+    // Выбираем клетку
+    let target = null;
+    if (botLevel !== 'easy') {
+      // Сначала добиваем раненые
+      while (this.botQueue.length > 0 && !target) {
+        const t = this.botQueue.shift();
+        if (!this.shotsAtMe[t.r][t.c]) target = t;
+      }
+    }
+    if (!target) {
+      const avail = [];
+      for (let r = 0; r < S; r++) for (let c = 0; c < S; c++) {
+        if (this.shotsAtMe[r][c]) continue;
+        if (botLevel === 'hard' && (r + c) % 2 !== 0) continue;
+        avail.push({ r, c });
+      }
+      if (avail.length === 0) {
+        for (let r = 0; r < S; r++) for (let c = 0; c < S; c++)
+          if (!this.shotsAtMe[r][c]) avail.push({ r, c });
+      }
+      target = avail[Math.floor(Math.random() * avail.length)];
+    }
+    if (!target) return;
+    // Делаем выстрел
+    const { r, c } = target;
+    const hit = this.shipsAtMe[r][c];
+    this.shotsAtMe[r][c] = hit ? 'hit' : 'miss';
+    if (hit && botLevel !== 'easy') {
+      for (const [dr, dc] of [[0,1],[1,0],[0,-1],[-1,0]]) {
+        const nr = r + dr, nc = c + dc;
+        if (nr >= 0 && nr < S && nc >= 0 && nc < S && !this.shotsAtMe[nr][nc])
+          this.botQueue.push({ r: nr, c: nc });
+      }
+    }
+    // Проверка победы бота
+    let allSunk = true;
+    for (let rr = 0; rr < S; rr++) for (let cc = 0; cc < S; cc++)
+      if (this.shipsAtMe[rr][cc] && this.shotsAtMe[rr][cc] !== 'hit') allSunk = false;
+    this.render();
+    if (allSunk) { this.done = true; setStatus('😢 Бот потопил ваш флот'); return; }
+    if (hit) {
+      setStatus('Бот попал! Бот стреляет ещё...');
+      botDelay(() => { if (!this.done) this.botMove(); });
+    } else {
+      setStatus('Бот промахнулся. Ваш ход');
+      isMyTurn = true;
+    }
+  }
+};
+</script>
+</body>
+  </html>
