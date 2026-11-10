@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Мини-игры P2P</title>
+<title>Игры для компании</title>
 <meta name="theme-color" content="#ece2cd">
 <style>
 :root {
@@ -20,7 +20,7 @@ body.dark {
 html, body {
   height: 100%; width: 100%; font-family: Georgia, serif;
   background: var(--paper); color: var(--ink);
-  transition: background .3s, color .3s; overflow-x: hidden;
+  transition: background .3s, color .3s; overflow-x: hidden; user-select: none;
 }
 body::before {
   content: ''; position: fixed; inset: 0; z-index: 0; pointer-events: none;
@@ -29,106 +29,77 @@ body::before {
 }
 body.dark::before { opacity: .15; }
 .frame { position: fixed; inset: 12px; border: 1px solid var(--frame); opacity: .4; pointer-events: none; z-index: 5; }
-.frame::before { content: ''; position: absolute; inset: 4px; border: 1px solid var(--frame); opacity: .5; }
 
-.container { max-width: 900px; margin: 0 auto; padding: 30px 15px; position: relative; z-index: 10; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
-h1 { font-size: clamp(24px, 5vw, 40px); margin-bottom: 20px; letter-spacing: 0.05em; text-align: center; text-transform: uppercase; }
+.container { max-width: 900px; margin: 0 auto; padding: 20px 10px; position: relative; z-index: 10; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
+h1 { font-size: clamp(20px, 5vw, 32px); margin-bottom: 15px; text-align: center; text-transform: uppercase; letter-spacing: 1px; }
 
-#top-bar { display: flex; gap: 10px; justify-content: center; margin-bottom: 20px; width: 100%; flex-wrap: wrap; position: relative; z-index: 100; }
-#top-bar button { padding: 8px 16px; font-family: 'Courier New', monospace; font-size: 12px; font-weight: 700; background: var(--card); color: var(--ink); border: 1px solid var(--frame); cursor: pointer; text-transform: uppercase; transition: 0.1s; }
-#top-bar button:hover { background: var(--paper-d); }
+#top-bar { display: flex; gap: 8px; justify-content: center; margin-bottom: 15px; width: 100%; flex-wrap: wrap; position: relative; z-index: 100; }
+#top-bar button { padding: 8px 12px; font-family: 'Courier New', monospace; font-size: 11px; font-weight: 700; background: var(--card); color: var(--ink); border: 1px solid var(--frame); cursor: pointer; text-transform: uppercase; }
 #top-bar button.btn-seal { background: var(--seal); color: var(--paper); border-color: var(--seal); }
-#top-bar button#theme-toggle { color: var(--gold); border-color: var(--gold); }
 
-.panel { background: var(--paper); border: 1px solid var(--frame); box-shadow: 4px 4px 0 var(--shadow); padding: 20px; width: 100%; max-width: 700px; margin-bottom: 20px; position: relative; }
-.panel::before { content: ''; position: absolute; inset: 4px; border: 1px solid var(--frame); pointer-events: none; opacity: .2; }
-
-#menu { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin-bottom: 20px; width: 100%; }
-#menu button { padding: 10px 16px; font-family: 'Courier New', monospace; font-size: 12px; font-weight: 700; background: var(--card); color: var(--ink); border: 1px solid var(--frame); cursor: pointer; text-transform: uppercase; transition: 0.1s; flex: 1; min-width: 120px; }
-#menu button:hover { background: var(--paper-d); }
+#menu { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; margin-bottom: 15px; width: 100%; }
+#menu button { padding: 8px 12px; font-family: 'Courier New', monospace; font-size: 11px; font-weight: 700; background: var(--card); color: var(--ink); border: 1px solid var(--frame); cursor: pointer; text-transform: uppercase; flex: 1; min-width: 90px; }
 #menu button.active { background: var(--seal); color: var(--paper); border-color: var(--seal); }
 #menu button:disabled { opacity: 0.5; cursor: not-allowed; }
 
-#settings { display: flex; flex-direction: column; gap: 10px; width: 100%; margin-bottom: 20px; }
-.setting-row { display: flex; align-items: center; justify-content: space-between; padding: 10px; border: 1px solid var(--frame); background: var(--card); }
-.setting-row label { font-size: 14px; font-weight: bold; }
-.setting-row select { padding: 8px; font-family: 'Courier New', monospace; font-size: 12px; background: var(--paper); border: 1px solid var(--frame); color: var(--ink); outline: none; }
+.panel { background: var(--paper); border: 1px solid var(--frame); box-shadow: 4px 4px 0 var(--shadow); padding: 15px; width: 100%; max-width: 700px; margin-bottom: 15px; position: relative; }
 
-.btn { padding: 12px 24px; font-family: 'Courier New', monospace; font-size: 13px; font-weight: 700; color: var(--paper); background: var(--ink); border: 1px solid var(--frame); cursor: pointer; text-transform: uppercase; box-shadow: 3px 3px 0 var(--shadow); transition: 0.1s; }
-.btn:hover { transform: translate(-1px, -1px); box-shadow: 4px 4px 0 var(--shadow); }
+#settings { display: flex; flex-direction: column; gap: 8px; width: 100%; margin-bottom: 15px; }
+.setting-row { display: flex; align-items: center; justify-content: space-between; padding: 8px; border: 1px solid var(--frame); background: var(--card); }
+.setting-row label { font-size: 13px; font-weight: bold; }
+.setting-row select { padding: 6px; font-family: 'Courier New', monospace; font-size: 12px; background: var(--paper); border: 1px solid var(--frame); color: var(--ink); }
+
+.btn { padding: 10px 20px; font-family: 'Courier New', monospace; font-size: 12px; font-weight: 700; color: var(--paper); background: var(--ink); border: 1px solid var(--frame); cursor: pointer; text-transform: uppercase; box-shadow: 3px 3px 0 var(--shadow); }
 .btn-seal { background: var(--seal); }
 .btn-secondary { background: var(--paper); color: var(--ink); }
-.btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
-.btn-row { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin-top: 20px; }
+.btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.btn-row { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin-top: 15px; }
 
-#status { font-size: 16px; font-weight: bold; text-align: center; min-height: 24px; margin-bottom: 20px; font-family: 'Courier New', monospace; color: var(--seal); text-transform: uppercase; letter-spacing: 0.1em; }
-#game-area { display: flex; justify-content: center; width: 100%; margin-bottom: 20px; min-height: 50px; position: relative; }
+#status { font-size: 14px; font-weight: bold; text-align: center; min-height: 20px; margin-bottom: 15px; font-family: 'Courier New', monospace; color: var(--seal); text-transform: uppercase; }
+#game-area { display: flex; justify-content: center; width: 100%; margin-bottom: 15px; min-height: 50px; position: relative; }
 .hidden { display: none !important; }
 
-/* Доски */
-.ttt-board { display: grid; grid-template-columns: repeat(3, 1fr); width: min(300px, 80vw); aspect-ratio: 1; gap: 4px; background: var(--frame); border: 4px solid var(--frame); position: relative; }
-.ttt-board .cell { background: var(--paper); display: flex; justify-content: center; align-items: center; font-size: min(15vw, 60px); font-weight: bold; cursor: pointer; font-family: Georgia, serif; color: var(--ink); }
-.ttt-board .cell:hover { background: var(--paper-d); }
-.ttt-board .cell.x { color: var(--ink); }
-.ttt-board .cell.o { color: var(--seal); }
-.ttt-board .cell.win { background: var(--gold); color: var(--paper); }
-.ttt-line { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 10; }
-.ttt-line line { stroke: var(--seal); stroke-width: 8; stroke-linecap: round; stroke-dasharray: 1000; stroke-dashoffset: 1000; animation: drawLine 0.4s ease forwards; }
-@keyframes drawLine { to { stroke-dashoffset: 0; } }
+/* P2P Box */
+.p2p-box { width: 100%; display: flex; flex-direction: column; gap: 8px; background: var(--card); padding: 12px; border: 1px dashed var(--frame); margin-top: 10px; }
+.p2p-box input { width: 100%; padding: 8px; font-family: monospace; font-size: 11px; border: 1px solid var(--frame); background: var(--paper); color: var(--ink); }
+.p2p-box button { padding: 8px; background: var(--ink); color: var(--paper); border: none; font-weight: bold; cursor: pointer; text-transform: uppercase; font-size: 11px; }
 
-.chess-board, .checkers-board { display: grid; grid-template-columns: repeat(8, 1fr); width: min(400px, 90vw); aspect-ratio: 1; border: 4px solid var(--frame); background: var(--frame); gap: 1px; }
-.chess-board .cell, .checkers-board .cell { display: flex; justify-content: center; align-items: center; font-size: min(8vw, 32px); cursor: pointer; position: relative; }
-.chess-board .light, .checkers-board .light { background: var(--paper); color: var(--ink); }
-.chess-board .dark, .checkers-board .dark { background: var(--paper-d); color: var(--ink); }
-.chess-board .cell.selected, .checkers-board .cell.selected { box-shadow: inset 0 0 0 4px var(--gold); }
-.chess-board .piece-w { text-shadow: 0 1px 0 rgba(255,255,255,0.8); }
-.chess-board .piece-b { text-shadow: 0 1px 0 rgba(0,0,0,0.2); }
-.checker-w { width: 70%; height: 70%; border-radius: 50%; background: var(--paper); border: 3px solid var(--ink); display: flex; justify-content: center; align-items: center; font-size: 14px; color: var(--ink); font-weight: bold; }
-.checker-b { width: 70%; height: 70%; border-radius: 50%; background: var(--ink); border: 3px solid var(--ink); display: flex; justify-content: center; align-items: center; font-size: 14px; color: var(--paper); font-weight: bold; }
+/* Игровые доски */
+.ttt-board { display: grid; grid-template-columns: repeat(3, 1fr); width: min(280px, 80vw); aspect-ratio: 1; gap: 4px; background: var(--frame); border: 4px solid var(--frame); }
+.ttt-board .cell { background: var(--paper); display: flex; justify-content: center; align-items: center; font-size: min(15vw, 50px); font-weight: bold; cursor: pointer; }
+.ttt-board .cell.win { background: var(--gold); color: var(--paper); }
+
+.chess-board, .checkers-board { display: grid; grid-template-columns: repeat(8, 1fr); width: min(350px, 90vw); aspect-ratio: 1; border: 4px solid var(--frame); background: var(--frame); gap: 1px; }
+.chess-board .cell, .checkers-board .cell { display: flex; justify-content: center; align-items: center; font-size: min(8vw, 28px); cursor: pointer; }
+.light { background: var(--paper); } .dark { background: var(--paper-d); }
+.checker-w { width: 70%; height: 70%; border-radius: 50%; background: var(--paper); border: 2px solid var(--ink); }
+.checker-b { width: 70%; height: 70%; border-radius: 50%; background: var(--ink); border: 2px solid var(--ink); }
 
 .c4-board { display: grid; grid-template-columns: repeat(7, 1fr); grid-template-rows: repeat(6, 1fr); width: min(350px, 90vw); aspect-ratio: 7/6; background: var(--frame); border: 4px solid var(--frame); gap: 4px; padding: 4px; }
-.c4-board .cell { background: var(--paper); border-radius: 50%; cursor: pointer; box-shadow: inset 0 3px 5px rgba(0,0,0,0.2); }
+.c4-board .cell { background: var(--paper); border-radius: 50%; cursor: pointer; }
 .c4-board .cell.red { background: var(--seal); }
 .c4-board .cell.yellow { background: var(--gold); }
 
-.bs-container { display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; width: 100%; }
-.bs-board { display: grid; gap: 2px; background: var(--frame); border: 2px solid var(--frame); padding: 2px; }
-.bs-board .cell { background: var(--paper); width: min(8vw, 30px); height: min(8vw, 30px); display: flex; justify-content: center; align-items: center; font-size: 12px; cursor: pointer; color: var(--ink); }
-.bs-board .cell.ship { background: var(--paper-d); border: 1px solid var(--ink-soft); }
-.bs-board .cell.hit { background: var(--seal); color: var(--paper); }
-.bs-board .cell.miss { background: var(--ink-soft); }
-.bs-title { text-align: center; font-family: 'Courier New', monospace; font-size: 12px; margin-bottom: 8px; text-transform: uppercase; font-weight: bold; }
+/* Мини-игры для компании */
+.tug-container { display: flex; width: 100%; height: 300px; border: 4px solid var(--frame); position: relative; overflow: hidden; }
+.tug-half { flex: 1; display: flex; justify-content: center; align-items: center; font-size: 20px; font-weight: bold; cursor: pointer; }
+.tug-p1 { background: rgba(139,32,25,0.2); color: var(--seal); border-right: 2px dashed var(--frame); }
+.tug-p2 { background: rgba(156,122,44,0.2); color: var(--gold); }
+.tug-rope { position: absolute; top: 50%; left: 50%; width: 40px; height: 40px; background: var(--ink); border-radius: 50%; transform: translate(-50%, -50%); transition: left 0.1s; z-index: 10; pointer-events: none; }
 
-.p2p-box { width: 100%; display: flex; flex-direction: column; gap: 10px; background: var(--card); padding: 15px; border: 1px dashed var(--frame); margin-top: 10px; }
-.p2p-box input { width: 100%; padding: 10px; font-family: monospace; font-size: 11px; border: 1px solid var(--frame); background: var(--paper); color: var(--ink); }
-.p2p-box button { padding: 10px; background: var(--ink); color: var(--paper); border: none; font-family: 'Courier New', monospace; font-weight: bold; cursor: pointer; text-transform: uppercase; }
-.p2p-box button:disabled { opacity: 0.5; cursor: not-allowed; }
-.connect-status { font-size:12px; text-align:center; font-weight:bold; color:var(--seal); margin-top:10px; font-family: 'Courier New', monospace;}
+.reaction-container { width: 100%; height: 300px; display: flex; border: 4px solid var(--frame); }
+.reaction-half { flex: 1; display: flex; justify-content: center; align-items: center; font-size: 24px; font-weight: bold; color: white; cursor: pointer; }
+.reaction-p1 { background: #e74c3c; border-right: 2px solid white; }
+.reaction-p2 { background: #3498db; }
 
-/* Модалки */
 .modal { position: fixed; inset: 0; background: var(--overlay-bg); z-index: 2000; display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: opacity 0.3s; padding: 20px; }
 .modal.open { opacity: 1; pointer-events: auto; }
-.modal-content { background: var(--paper); border: 1px solid var(--frame); box-shadow: 6px 6px 0 var(--shadow); width: 100%; max-width: 500px; max-height: 80vh; display: flex; flex-direction: column; position: relative; }
-.modal-header { padding: 15px 20px; border-bottom: 1px solid var(--frame); font-family: 'Courier New', monospace; font-weight: bold; text-transform: uppercase; display: flex; justify-content: space-between; align-items: center; }
-.modal-body { padding: 20px; overflow-y: auto; }
-.modal-close { background: none; border: none; font-size: 20px; cursor: pointer; color: var(--ink); font-weight: bold; }
-
-.ach-item { display: flex; align-items: center; gap: 15px; padding: 10px; border: 1px solid var(--frame); margin-bottom: 10px; background: var(--card); }
-.ach-item.unlocked { border-color: var(--gold); background: rgba(156,122,44,0.1); }
-.ach-icon { font-size: 24px; width: 40px; text-align: center; filter: grayscale(1); opacity: 0.5; }
-.ach-item.unlocked .ach-icon { filter: none; opacity: 1; }
-.ach-info { flex: 1; }
-.ach-title { font-weight: bold; font-size: 14px; }
-.ach-desc { font-size: 12px; color: var(--ink-soft); font-family: 'Courier New', monospace; margin-top: 3px; }
-.ach-status { font-size: 11px; font-weight: bold; color: var(--gold); text-transform: uppercase; }
-
-.ach-toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-100px); background: var(--ink); color: var(--paper); padding: 15px 30px; border: 2px solid var(--gold); font-family: 'Courier New', monospace; font-weight: bold; z-index: 3000; transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); text-align: center; box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
-.ach-toast.show { transform: translateX(-50%) translateY(0); }
-.ach-toast .title { color: var(--gold); font-size: 12px; text-transform: uppercase; margin-bottom: 5px; }
-.ach-toast .name { font-size: 18px; color: var(--paper); }
+.modal-content { background: var(--paper); border: 1px solid var(--frame); box-shadow: 6px 6px 0 var(--shadow); width: 100%; max-width: 400px; display: flex; flex-direction: column; }
+.modal-header { padding: 15px; border-bottom: 1px solid var(--frame); font-weight: bold; text-transform: uppercase; display: flex; justify-content: space-between; }
+.modal-body { padding: 20px; }
+.modal-close { background: none; border: none; font-size: 20px; cursor: pointer; color: var(--ink); }
 
 @media (max-width: 600px) {
-  .container { padding: 15px 10px; }
   .setting-row { flex-direction: column; align-items: flex-start; gap: 5px; }
   .setting-row select { width: 100%; }
   .btn { width: 100%; }
@@ -140,20 +111,21 @@ h1 { font-size: clamp(24px, 5vw, 40px); margin-bottom: 20px; letter-spacing: 0.0
 <div class="frame"></div>
 
 <div class="container">
-  <h1>Мини-игры</h1>
+  <h1>Игры для компании</h1>
   
   <div id="top-bar">
-    <button id="btn-achievements" class="btn-seal">Достижения</button>
-    <button id="btn-championship">Чемпионат</button>
-    <button id="theme-toggle">Тёмная тема</button>
+    <button id="btn-settings" class="btn-seal">Настройки</button>
+    <button id="btn-other">Другие игры</button>
+    <button id="theme-toggle">Тема</button>
   </div>
 
   <div id="menu">
     <button data-game="tictactoe" class="active">Крестики-нолики</button>
-    <button data-game="chess">Шахматы</button>
-    <button data-game="checkers">Русские шашки</button>
+    <button data-game="tug">Канат</button>
+    <button data-game="reaction">Реакция</button>
     <button data-game="connect4">4 в ряд</button>
-    <button data-game="battleship">Морской бой</button>
+    <button data-game="chess">Шахматы</button>
+    <button data-game="checkers">Шашки</button>
   </div>
 
   <div class="panel">
@@ -161,9 +133,9 @@ h1 { font-size: clamp(24px, 5vw, 40px); margin-bottom: 20px; letter-spacing: 0.0
       <div class="setting-row">
         <label>Режим игры</label>
         <select id="mode">
+          <option value="local">На 1 устройстве</option>
           <option value="bot">С ботом</option>
-          <option value="local">Локально (2 игрока)</option>
-          <option value="p2p">Онлайн P2P (Код)</option>
+          <option value="p2p">🌐 Онлайн P2P (Wi-Fi/Сеть)</option>
         </select>
       </div>
       <div class="setting-row" id="levelRow">
@@ -174,176 +146,166 @@ h1 { font-size: clamp(24px, 5vw, 40px); margin-bottom: 20px; letter-spacing: 0.0
           <option value="hard">Сложный</option>
         </select>
       </div>
-      <!-- Изначально скрываем настройку размера поля! -->
-      <div class="setting-row hidden" id="sizeRow">
-        <label>Размер поля (Морской бой)</label>
-        <select id="bsSize">
-          <option value="8">8×8 (быстрый)</option>
-          <option value="10">10×10 (классика)</option>
-        </select>
-      </div>
     </div>
 
-    <div id="status">Выберите игру и настройки</div>
+    <div id="status">Выберите игру</div>
     <div id="game-area"></div>
 
     <div class="btn-row">
       <button id="startBtn" class="btn btn-seal">Начать игру</button>
-      <button id="backBtn" class="btn btn-secondary hidden">Вернуться в меню</button>
+      <button id="backBtn" class="btn btn-secondary hidden">В меню</button>
+      <button id="downloadBtn" class="btn btn-secondary" style="color: var(--gold); border-color: var(--gold);">Скачать</button>
     </div>
 
+    <!-- Блок P2P (Коды подключения) -->
     <div id="p2pUI" class="hidden p2p-box">
       <div id="hostUI">
-        <p style="font-size:12px; color:var(--ink-soft); margin-bottom:8px;">1. Нажмите кнопку, скопируйте код и отправьте другу.</p>
-        <button id="genCodeBtn" class="btn-seal" style="margin-bottom:10px; width:100%;">Создать код</button>
+        <p style="font-size:11px; color:var(--ink-soft); margin-bottom:5px;">1. Создайте код и отправьте другу.</p>
+        <button id="genCodeBtn" class="btn-seal" style="width:100%;">Создать код</button>
         <input type="text" id="hostCodeOut" readonly placeholder="Здесь появится ваш код...">
-        <p style="font-size:12px; color:var(--ink-soft); margin:10px 0 8px;">2. Вставьте ответный код друга:</p>
+        <p style="font-size:11px; color:var(--ink-soft); margin:10px 0 5px;">2. Вставьте ответный код друга:</p>
         <input type="text" id="guestCodeIn" placeholder="Ответный код друга">
-        <button id="finishConnBtn" style="margin-top:10px; width:100%;">Завершить подключение</button>
+        <button id="finishConnBtn" style="width:100%; margin-top:5px;">Подключиться</button>
       </div>
       <div id="guestUI" class="hidden">
-        <p style="font-size:12px; color:var(--ink-soft); margin-bottom:8px;">1. Вставьте код приглашения от друга:</p>
+        <p style="font-size:11px; color:var(--ink-soft); margin-bottom:5px;">1. Вставьте код приглашения:</p>
         <input type="text" id="hostCodeIn" placeholder="Код приглашения">
-        <button id="joinGameBtn" class="btn-seal" style="margin-top:10px; width:100%;">Сгенерировать ответ</button>
-        <p style="font-size:12px; color:var(--ink-soft); margin:10px 0 8px;">2. Скопируйте ответный код и отправьте другу:</p>
+        <button id="joinGameBtn" class="btn-seal" style="width:100%; margin-top:5px;">Создать ответ</button>
+        <p style="font-size:11px; color:var(--ink-soft); margin:10px 0 5px;">2. Отправьте этот ответ другу:</p>
         <input type="text" id="guestCodeOut" readonly placeholder="Здесь появится ответный код...">
       </div>
-      <div id="connectStatus" class="connect-status"></div>
     </div>
   </div>
 </div>
 
-<div class="modal" id="achModal">
+<!-- Модалки -->
+<div class="modal" id="settingsModal">
   <div class="modal-content">
-    <div class="modal-header">
-      <span>Достижения</span>
-      <button class="modal-close" onclick="document.getElementById('achModal').classList.remove('open')">×</button>
+    <div class="modal-header"><span>Настройки</span><button class="modal-close" onclick="document.getElementById('settingsModal').classList.remove('open')">×</button></div>
+    <div class="modal-body">
+      <div class="setting-row" style="margin-bottom: 10px;"><label>Звуки</label><button class="btn btn-secondary" style="padding: 5px;" onclick="alert('Звуки включены')">Вкл</button></div>
+      <div class="setting-row" style="margin-bottom: 10px;"><label>Вибрация</label><button class="btn btn-secondary" style="padding: 5px;" onclick="alert('Вибрация включена')">Вкл</button></div>
     </div>
-    <div class="modal-body" id="achList"></div>
   </div>
 </div>
 
-<div class="ach-toast" id="achToast">
-  <div class="title">Получено достижение!</div>
-  <div class="name" id="achToastName"></div>
+<div class="modal" id="otherModal">
+  <div class="modal-content">
+    <div class="modal-header"><span>Другие игры</span><button class="modal-close" onclick="document.getElementById('otherModal').classList.remove('open')">×</button></div>
+    <div class="modal-body" style="text-align:center;">
+      <a href="https://gffrgoogle.github.io/haha/" target="_blank" class="btn btn-seal" style="text-decoration: none; display: inline-block;">Играть в ХА-ХА-ХА</a>
+    </div>
+  </div>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
 <script>
-// ========== СИСТЕМА СОХРАНЕНИЙ ==========
-const SaveManager = {
-  data: { achievements: [], stats: { played: 0, wins: 0, losses: 0, draws: 0 }, champWins: 0 },
-  load() {
-    const saved = localStorage.getItem('minigames_progress');
-    if (saved) { try { this.data = JSON.parse(saved); } catch(e) {} }
-    if (!this.data.achievements) this.data.achievements = [];
-    if (!this.data.stats) this.data.stats = { played: 0, wins: 0, losses: 0, draws: 0 };
-  },
-  save() { localStorage.setItem('minigames_progress', JSON.stringify(this.data)); },
-  unlock(id) {
-    if (!this.data.achievements.includes(id)) {
-      this.data.achievements.push(id);
-      this.save();
-      showAchievementToast(id);
-    }
-  },
-  addStat(type) {
-    this.data.stats.played++;
-    if (type === 'win') this.data.stats.wins++;
-    if (type === 'lose') this.data.stats.losses++;
-    if (type === 'draw') this.data.stats.draws++;
-    this.save();
-    checkAchievements();
-  }
-};
-SaveManager.load();
+// ========== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ==========
+let p2p = null, isHost = false, isMyTurn = false;
+let selectedGame = 'tictactoe';
+let currentGame = null;
+let gameMode = 'local';
+let botLevel = 'easy';
 
-const ACHIEVEMENTS_DB = {
-  first_win: { title: "Первая победа", desc: "Выиграйте первую игру", icon: "🏆" },
-  play_10: { title: "Ветеран", desc: "Сыграйте 10 игр", icon: "🎖️" },
-  champ_1: { title: "Чемпион", desc: "Выиграйте чемпионат", icon: "👑" },
-  ttt_hard: { title: "Мастер ХО", desc: "Победите в крестиках-ноликах на сложном", icon: "❌" },
-  chess_hard: { title: "Гроссмейстер", desc: "Победите в шахматах на сложном", icon: "♞" },
-  check_hard: { title: "Дамка", desc: "Победите в шашках на сложном", icon: "⚫" },
-  c4_hard: { title: "Четыре в ряд", desc: "Победите в 4 в ряд на сложном", icon: "🔴" },
-  bs_hard: { title: "Адмирал", desc: "Победите в морском бою на сложном", icon: "🚢" }
+const statusEl = document.getElementById('status');
+const gameAreaEl = document.getElementById('game-area');
+const startBtn = document.getElementById('startBtn');
+const backBtn = document.getElementById('backBtn');
+const modeSel = document.getElementById('mode');
+const levelSel = document.getElementById('level');
+const levelRow = document.getElementById('levelRow');
+const p2pUI = document.getElementById('p2pUI');
+const hostUI = document.getElementById('hostUI');
+const guestUI = document.getElementById('guestUI');
+
+function setStatus(t) { statusEl.textContent = t; }
+function sendMove(data) { if (p2p) p2p.send({ ...data, _g: selectedGame }); }
+function botDelay(fn) { setTimeout(fn, 500); }
+
+// ========== UI ЛОГИКА ==========
+document.getElementById('btn-settings').onclick = () => document.getElementById('settingsModal').classList.add('open');
+document.getElementById('btn-other').onclick = () => document.getElementById('otherModal').classList.add('open');
+document.getElementById('theme-toggle').onclick = () => {
+  document.body.classList.toggle('dark');
+  document.getElementById('theme-toggle').textContent = document.body.classList.contains('dark') ? 'Светлая' : 'Тёмная';
+};
+document.getElementById('downloadBtn').onclick = () => {
+  const html = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+  const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([html], {type: 'text/html'})); a.download = 'company_games.html'; a.click();
+  alert('Игра скачана!');
 };
 
-function showAchievementToast(id) {
-  const ach = ACHIEVEMENTS_DB[id]; if (!ach) return;
-  const toast = document.getElementById('achToast');
-  document.getElementById('achToastName').textContent = ach.title;
-  toast.classList.add('show');
-  setTimeout(() => toast.classList.remove('show'), 3000);
-}
-
-function checkAchievements() {
-  const s = SaveManager.data.stats;
-  if (s.wins >= 1) SaveManager.unlock('first_win');
-  if (s.played >= 10) SaveManager.unlock('play_10');
-  if (SaveManager.data.champWins >= 1) SaveManager.unlock('champ_1');
-}
-
-function renderAchievements() {
-  const list = document.getElementById('achList'); list.innerHTML = '';
-  for (const [id, ach] of Object.entries(ACHIEVEMENTS_DB)) {
-    const unlocked = SaveManager.data.achievements.includes(id);
-    const div = document.createElement('div');
-    div.className = 'ach-item' + (unlocked ? ' unlocked' : '');
-    div.innerHTML = `
-      <div class="ach-icon">${ach.icon}</div>
-      <div class="ach-info"><div class="ach-title">${ach.title}</div><div class="ach-desc">${ach.desc}</div></div>
-      <div class="ach-status">${unlocked ? 'Получено' : 'Закрыто'}</div>`;
-    list.appendChild(div);
-  }
-}
-document.getElementById('btn-achievements').onclick = () => { renderAchievements(); document.getElementById('achModal').classList.add('open'); };
-
-// ========== ЧЕМПИОНАТ ==========
-document.getElementById('btn-championship').onclick = () => {
-  if (p2p) { alert('Завершите текущую P2P игру!'); return; }
-  const games = ['tictactoe', 'chess', 'checkers', 'connect4', 'battleship'];
-  const diffs = ['medium', 'hard'];
-  const randomGame = games[Math.floor(Math.random() * games.length)];
-  const randomDiff = diffs[Math.floor(Math.random() * diffs.length)];
-  
-  document.querySelectorAll('#menu button').forEach(b => b.classList.remove('active'));
-  document.querySelector(`#menu button[data-game="${randomGame}"]`).classList.add('active');
-  document.getElementById('mode').value = 'bot';
-  document.getElementById('level').value = randomDiff;
-  
-  selectedGame = randomGame; gameMode = 'championship'; botLevel = randomDiff; bsSize = 10;
-  updateSettingsVisibility(); isHost = true;
-  alert(`ЧЕМПИОНАТ!\nИгра: ${randomGame.toUpperCase()}\nСложность: ${randomDiff.toUpperCase()}\nУдачи!`);
-  startGame(selectedGame, true);
-};
-
-// ========== ТЕМА И ЦВЕТ ВЕРХНЕЙ ПАНЕЛИ ==========
-const themeToggle = document.getElementById('theme-toggle');
-const metaThemeColor = document.querySelector('meta[name="theme-color"]');
-const savedTheme = localStorage.getItem('theme') || 'light';
-
-function applyTheme(isDark) {
-  if (isDark) {
-    document.body.classList.add('dark');
-    themeToggle.textContent = 'Светлая тема';
-    metaThemeColor.setAttribute('content', '#1a1714');
-  } else {
-    document.body.classList.remove('dark');
-    themeToggle.textContent = 'Тёмная тема';
-    metaThemeColor.setAttribute('content', '#ece2cd');
-  }
-}
-
-applyTheme(savedTheme === 'dark');
-
-themeToggle.addEventListener('click', () => {
-  const isDark = !document.body.classList.contains('dark');
-  applyTheme(isDark);
-  localStorage.setItem('theme', isDark ? 'dark' : 'light');
+document.querySelectorAll('#menu button').forEach(btn => {
+  btn.onclick = () => {
+    if (p2p) return;
+    document.querySelectorAll('#menu button').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    selectedGame = btn.dataset.game;
+    gameAreaEl.innerHTML = '';
+    setStatus(`Выбрано: ${btn.textContent}`);
+    updateSettings();
+  };
 });
 
-// ========== РУЧНОЙ WEBRTC (С КОДАМИ) ==========
+modeSel.onchange = () => { gameMode = modeSel.value; updateSettings(); };
+levelSel.onchange = () => { botLevel = levelSel.value; };
+
+function updateSettings() {
+  const isP2P = modeSel.value === 'p2p';
+  levelRow.classList.toggle('hidden', isP2P || gameMode === 'local' || ['tug', 'reaction'].includes(selectedGame));
+  p2pUI.classList.toggle('hidden', !isP2P);
+  startBtn.classList.toggle('hidden', isP2P);
+}
+
+// ========== СТАРТ И СБРОС ==========
+startBtn.onclick = () => {
+  gameMode = modeSel.value;
+  botLevel = levelSel.value;
+  isHost = true;
+  startGame(selectedGame);
+};
+
+backBtn.onclick = () => {
+  if (p2p) { p2p.close(); p2p = null; }
+  currentGame = null;
+  gameAreaEl.innerHTML = '';
+  startBtn.classList.remove('hidden');
+  backBtn.classList.add('hidden');
+  modeSel.disabled = false;
+  document.querySelectorAll('#menu button').forEach(b => b.disabled = false);
+  document.getElementById('hostCodeOut').value = '';
+  document.getElementById('guestCodeIn').value = '';
+  document.getElementById('hostCodeIn').value = '';
+  document.getElementById('guestCodeOut').value = '';
+  document.getElementById('genCodeBtn').disabled = false;
+  document.getElementById('joinGameBtn').disabled = false;
+  p2pUI.classList.add('hidden');
+  setStatus(`Выбрано: ${document.querySelector('#menu button.active').textContent}`);
+  updateSettings();
+};
+
+function startGame(gameName) {
+  isMyTurn = true;
+  const Games = { 
+    tictactoe: TicTacToe, tug: TugOfWar, reaction: ReactionTest,
+    connect4: Connect4, chess: ChessG, checkers: Checkers 
+  };
+  currentGame = Games[gameName];
+  currentGame.init();
+  currentGame.render();
+  startBtn.classList.add('hidden');
+  backBtn.classList.remove('hidden');
+  modeSel.disabled = true;
+  document.querySelectorAll('#menu button').forEach(b => b.disabled = true);
+  p2pUI.classList.add('hidden');
+}
+
+function triggerBotIfNeeded() {
+  if (gameMode !== 'bot' || !currentGame || currentGame.done) return;
+  botDelay(() => { if (!currentGame.done) currentGame.botMove(); });
+}
+
+// ========== P2P РУЧНОЙ WEBRTC ==========
 class ManualP2P {
   constructor() { this.pc = null; this.channel = null; this.onData = null; this.onOpen = null; }
   async createOffer() {
@@ -392,79 +354,6 @@ class ManualP2P {
   close() { if (this.channel) this.channel.close(); if (this.pc) this.pc.close(); }
 }
 
-// ========== GLOBAL STATE ==========
-let p2p = null, isHost = false, isMyTurn = false;
-let selectedGame = 'tictactoe';
-let currentGame = null;
-let gameMode = 'bot';
-let botLevel = 'easy';
-let bsSize = 8;
-
-const statusEl = document.getElementById('status');
-const gameAreaEl = document.getElementById('game-area');
-const startBtn = document.getElementById('startBtn');
-const backBtn = document.getElementById('backBtn');
-const modeSel = document.getElementById('mode');
-const levelSel = document.getElementById('level');
-const bsSizeSel = document.getElementById('bsSize');
-const levelRow = document.getElementById('levelRow');
-const sizeRow = document.getElementById('sizeRow');
-const p2pUI = document.getElementById('p2pUI');
-const hostUI = document.getElementById('hostUI');
-const guestUI = document.getElementById('guestUI');
-
-function setStatus(t) { statusEl.textContent = t; }
-function sendMove(data) { if (p2p) p2p.send({ ...data, _g: selectedGame }); }
-function botDelay(fn) { setTimeout(fn, 400); }
-
-// ========== UI LOGIC ==========
-document.querySelectorAll('#menu button').forEach(btn => {
-  btn.onclick = () => {
-    if (p2p) return;
-    document.querySelectorAll('#menu button').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    selectedGame = btn.dataset.game;
-    updateSettingsVisibility();
-    gameAreaEl.innerHTML = '';
-    setStatus(`Выбрано: ${btn.textContent}`);
-  };
-});
-
-modeSel.onchange = () => { gameMode = modeSel.value; updateSettingsVisibility(); };
-levelSel.onchange = () => { botLevel = levelSel.value; };
-bsSizeSel.onchange = () => { bsSize = parseInt(bsSizeSel.value); };
-
-function updateSettingsVisibility() {
-  const isP2P = modeSel.value === 'p2p';
-  const isLocal = modeSel.value === 'local';
-  const isBS = selectedGame === 'battleship';
-  
-  levelRow.classList.toggle('hidden', isP2P || isLocal);
-  // Скрываем размер поля, если это НЕ морской бой
-  sizeRow.classList.toggle('hidden', !isBS || isP2P);
-  p2pUI.classList.toggle('hidden', !isP2P);
-  startBtn.classList.toggle('hidden', isP2P);
-  
-  if (modeSel.value === 'local' && isBS) {
-    setStatus('Морской бой недоступен локально.');
-    startBtn.disabled = true;
-  } else {
-    startBtn.disabled = false;
-  }
-}
-
-document.getElementById('tabHost').onclick = () => {
-  document.getElementById('tabHost').classList.add('active');
-  document.getElementById('tabGuest').classList.remove('active');
-  hostUI.classList.remove('hidden'); guestUI.classList.add('hidden'); isHost = true;
-};
-document.getElementById('tabGuest').onclick = () => {
-  document.getElementById('tabGuest').classList.add('active');
-  document.getElementById('tabHost').classList.remove('active');
-  guestUI.classList.remove('hidden'); hostUI.classList.add('hidden'); isHost = false;
-};
-
-// ========== ЛОГИКА P2P ==========
 document.getElementById('genCodeBtn').onclick = async () => {
   if (p2p) return;
   p2p = new ManualP2P();
@@ -473,6 +362,7 @@ document.getElementById('genCodeBtn').onclick = async () => {
   const code = await p2p.createOffer();
   document.getElementById('hostCodeOut').value = code;
   setStatus('Код готов! Отправьте его другу.');
+  isHost = true;
 };
 
 document.getElementById('finishConnBtn').onclick = async () => {
@@ -490,12 +380,13 @@ document.getElementById('joinGameBtn').onclick = async () => {
   if (!offer) return alert('Вставьте код приглашения!');
   if (p2p) return;
   p2p = new ManualP2P();
-  setStatus('Генерация ответного кода...');
+  setStatus('Генерация ответа...');
   document.getElementById('joinGameBtn').disabled = true;
   try {
     const answer = await p2p.acceptOffer(offer);
     document.getElementById('guestCodeOut').value = answer;
     setStatus('Ответ готов! Отправьте его хосту.');
+    isHost = false;
     setupGameConnection();
   } catch(e) { setStatus('Ошибка. Неверный код.'); }
 };
@@ -503,420 +394,161 @@ document.getElementById('joinGameBtn').onclick = async () => {
 function setupGameConnection() {
   p2p.onData = data => {
     if (data.type === 'start') {
-      startGame(data.game, false, data.bsSize);
+      isHost = false;
+      startGame(data.game);
     } else if (currentGame && currentGame.receive) {
       currentGame.receive(data);
     }
   };
   p2p.onOpen = () => {
+    setStatus('Соединение установлено!');
     if (isHost) {
-      p2p.send({ type: 'start', game: selectedGame, bsSize: parseInt(bsSizeSel.value) });
-      startGame(selectedGame, true);
+      p2p.send({ type: 'start', game: selectedGame });
+      startGame(selectedGame);
     }
   };
 }
 
-// ========== СТАРТ И СБРОС ==========
-startBtn.onclick = () => {
-  gameMode = modeSel.value;
-  botLevel = levelSel.value;
-  bsSize = parseInt(bsSizeSel.value);
-  if (gameMode === 'local' && selectedGame === 'battleship') return;
-  isHost = true;
-  startGame(selectedGame, true);
-};
+// ==========================================
+// ИГРЫ
+// ==========================================
 
-backBtn.onclick = () => {
-  if (p2p) { p2p.close(); p2p = null; }
-  currentGame = null;
-  gameAreaEl.innerHTML = '';
-  startBtn.classList.remove('hidden');
-  backBtn.classList.add('hidden');
-  modeSel.disabled = false;
-  document.querySelectorAll('#menu button').forEach(b => b.disabled = false);
-  document.getElementById('hostCodeOut').value = '';
-  document.getElementById('guestCodeIn').value = '';
-  document.getElementById('hostCodeIn').value = '';
-  document.getElementById('guestCodeOut').value = '';
-  document.getElementById('genCodeBtn').disabled = false;
-  document.getElementById('joinGameBtn').disabled = false;
-  p2pUI.classList.add('hidden');
-  const activeBtn = document.querySelector('#menu button.active');
-  setStatus(`Выбрано: ${activeBtn ? activeBtn.textContent : 'Игра'}`);
-  updateSettingsVisibility();
-};
-
-function startGame(gameName, host, size) {
-  isHost = host; isMyTurn = true;
-  if (gameName === 'battleship' && size) bsSize = size;
-  const Games = { tictactoe: TicTacToe, chess: ChessG, checkers: RussianCheckers, connect4: Connect4, battleship: Battleship };
-  currentGame = Games[gameName];
-  currentGame.init();
-  currentGame.render();
-  startBtn.classList.add('hidden');
-  backBtn.classList.remove('hidden');
-  modeSel.disabled = true;
-  document.querySelectorAll('#menu button').forEach(b => b.disabled = true);
-  p2pUI.classList.add('hidden');
-}
-
-function triggerBotIfNeeded() {
-  if ((gameMode !== 'bot' && gameMode !== 'championship') || !currentGame || currentGame.done) return;
-  botDelay(() => { if (!currentGame.done) currentGame.botMove(); });
-}
-
-// Инициализация при загрузке
-updateSettingsVisibility();
-
-// ========== ИГРЫ ==========
+// 1. КРЕСТИКИ-НОЛИКИ
 const TicTacToe = {
-  board: null, currentTurn: 'X', done: false, winCombo: null,
-  init() { this.board = Array(9).fill(''); this.currentTurn = 'X'; this.done = false; this.winCombo = null; },
+  board: null, done: false, turn: 'X',
+  init() { this.board = Array(9).fill(''); this.done = false; this.turn = 'X'; },
   render() {
     gameAreaEl.innerHTML = '<div id="board" class="ttt-board"></div>';
-    const b = document.getElementById('board');
-    this.board.forEach((v, i) => {
-      const c = document.createElement('div');
-      c.className = 'cell' + (v === 'X' ? ' x' : v === 'O' ? ' o' : '');
-      if (this.winCombo && this.winCombo.includes(i)) c.classList.add('win');
-      c.textContent = v; c.onclick = () => this.click(i); b.appendChild(c);
-    });
-    if (this.winCombo) this.drawWinLine();
-    if (!this.done) {
-      if (gameMode === 'local') setStatus(`Ход: ${this.currentTurn}`);
-      else setStatus(isMyTurn ? 'Ваш ход' : 'Ход противника');
-    }
-  },
-  drawWinLine() {
-    const board = document.getElementById('board');
-    const [a, b, c] = this.winCombo;
-    const coords = [
-      { x: 16.6, y: 16.6 }, { x: 50, y: 16.6 }, { x: 83.3, y: 16.6 },
-      { x: 16.6, y: 50 }, { x: 50, y: 50 }, { x: 83.3, y: 50 },
-      { x: 16.6, y: 83.3 }, { x: 50, y: 83.3 }, { x: 83.3, y: 83.3 }
-    ];
-    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-    svg.setAttribute('class', 'ttt-line'); svg.setAttribute('viewBox', '0 0 100 100');
-    const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-    line.setAttribute('x1', coords[a].x); line.setAttribute('y1', coords[a].y);
-    line.setAttribute('x2', coords[c].x); line.setAttribute('y2', coords[c].y);
-    svg.appendChild(line); board.appendChild(svg);
+    document.getElementById('board').innerHTML = this.board.map((v, i) => 
+      `<div class="cell" onclick="TicTacToe.click(${i})" style="color:${v==='X'?'var(--ink)':'var(--seal)'}">${v}</div>`
+    ).join('');
+    if (!this.done) setStatus(gameMode === 'local' ? `Ход: ${this.turn}` : (isMyTurn ? 'Ваш ход' : 'Ход противника'));
   },
   click(i) {
-    if (this.done || this.board[i]) return;
-    let symToPlay = gameMode === 'local' ? this.currentTurn : (isHost ? 'X' : 'O');
-    if (gameMode !== 'local' && !isMyTurn) return;
-    this.board[i] = symToPlay; this.render();
+    if (this.done || this.board[i] || (gameMode !== 'local' && !isMyTurn)) return;
+    let sym = gameMode === 'local' ? this.turn : (isHost ? 'X' : 'O');
+    this.board[i] = sym; this.render();
     if (!this.checkWin()) {
-      if (gameMode === 'local') { this.currentTurn = this.currentTurn === 'X' ? 'O' : 'X'; this.render(); }
-      else if (gameMode === 'p2p') { isMyTurn = false; sendMove({ index: i }); }
+      if (gameMode === 'local') { this.turn = this.turn === 'X' ? 'O' : 'X'; this.render(); }
+      else if (gameMode === 'p2p') { isMyTurn = false; sendMove({ index: i }); this.render(); }
       else { isMyTurn = false; triggerBotIfNeeded(); }
     }
   },
-  receive(data) { const opp = isHost ? 'O' : 'X'; this.board[data.index] = opp; isMyTurn = true; this.render(); this.checkWin(); },
+  receive(data) { this.board[data.index] = isHost ? 'O' : 'X'; isMyTurn = true; this.render(); this.checkWin(); },
   checkWin() {
-    const wins = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
-    for (const combo of wins) {
-      const [a,b,c] = combo;
+    const w = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+    for (const [a,b,c] of w) {
       if (this.board[a] && this.board[a] === this.board[b] && this.board[a] === this.board[c]) {
-        this.done = true; this.winCombo = combo; this.render();
-        if (gameMode === 'local') setStatus(`Победили ${this.board[a]}`);
-        else {
-          const win = this.board[a] === (isHost ? 'X' : 'O');
-          setStatus(win ? 'Вы победили' : 'Вы проиграли');
-          if (gameMode === 'p2p') sendMove({ type: 'gameover', result: win ? 'win' : 'lose' });
-          else onGameEnd(win ? 'win' : 'lose', selectedGame, botLevel);
-        }
-        return true;
+        this.done = true; setStatus(`🎉 Победили ${this.board[a]}`); return true;
       }
     }
-    if (!this.board.includes('')) { this.done = true; setStatus('Ничья'); if(gameMode !== 'local' && gameMode !== 'p2p') onGameEnd('draw', selectedGame, botLevel); return true; }
+    if (!this.board.includes('')) { this.done = true; setStatus('Ничья'); return true; }
     return false;
   },
   botMove() {
     if (this.done) return;
-    const botSym = isHost ? 'O' : 'X';
-    let idx; const free = this.board.map((v, i) => v ? null : i).filter(v => v !== null);
-    if (free.length === 0) return;
-    if (botLevel === 'easy') idx = free[Math.floor(Math.random() * free.length)];
-    else if (botLevel === 'medium') idx = this.mediumMove(botSym);
-    else idx = this.minimaxMove(botSym);
-    this.board[idx] = botSym; this.render(); if (!this.checkWin()) isMyTurn = true;
-  },
-  mediumMove(opp) {
-    const me = isHost ? 'X' : 'O';
-    for (let i = 0; i < 9; i++) {
-      if (this.board[i]) continue;
-      this.board[i] = opp; if (this.checkStatic(opp)) { this.board[i] = ''; return i; }
-      this.board[i] = me; if (this.checkStatic(me)) { this.board[i] = ''; return i; }
-      this.board[i] = '';
-    }
-    if (!this.board[4]) return 4;
-    const corners = [0,2,6,8].filter(i => !this.board[i]);
-    if (corners.length) return corners[Math.floor(Math.random() * corners.length)];
-    return this.board.map((v, i) => v ? null : i).filter(v => v !== null)[Math.floor(Math.random() * free.length)];
-  },
-  checkStatic(sym) { const w = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]]; return w.some(([a,b,c]) => this.board[a]===sym && this.board[b]===sym && this.board[c]===sym); },
-  minimaxMove(opp) {
-    const me = isHost ? 'X' : 'O'; let bestScore = -Infinity, bestMove = null;
-    for (let i = 0; i < 9; i++) {
-      if (this.board[i]) continue;
-      this.board[i] = opp; const s = this.minimax(false, opp, me, 1); this.board[i] = '';
-      if (s > bestScore) { bestScore = s; bestMove = i; }
-    }
-    return bestMove;
-  },
-  minimax(isMaximizing, opp, me, depth) {
-    if (this.checkStatic(opp)) return 10 - depth;
-    if (this.checkStatic(me)) return depth - 10;
-    if (!this.board.includes('')) return 0;
-    let best = isMaximizing ? -Infinity : Infinity;
-    for (let i = 0; i < 9; i++) {
-      if (this.board[i]) continue;
-      this.board[i] = isMaximizing ? opp : me;
-      const s = this.minimax(!isMaximizing, opp, me, depth + 1);
-      this.board[i] = ''; best = isMaximizing ? Math.max(best, s) : Math.min(best, s);
-    }
-    return best;
+    const free = this.board.map((v, i) => v ? null : i).filter(v => v !== null);
+    this.board[free[Math.floor(Math.random() * free.length)]] = 'O';
+    isMyTurn = true; this.render(); this.checkWin();
   }
 };
 
-const ChessG = {
-  game: null, selected: null, done: false,
-  init() { this.game = new Chess(); this.selected = null; this.done = false; },
-  myColor() { return gameMode === 'local' ? this.game.turn() : (isHost ? 'w' : 'b'); },
+// 2. ПЕРЕТЯГИВАНИЕ КАНАТА
+const TugOfWar = {
+  pos: 50, done: false,
+  init() { this.pos = 50; this.done = false; },
   render() {
-    gameAreaEl.innerHTML = '<div id="board" class="chess-board"></div>';
-    const b = document.getElementById('board'); const board = this.game.board();
-    const sym = {p:'♟',n:'♞',b:'♝',r:'♜',q:'♛',k:'♚',P:'♙',N:'♘',B:'♗',R:'♖',Q:'♕',K:'♔'};
-    const flip = this.myColor() === 'b';
-    for (let rr = 0; rr < 8; rr++) for (let cc = 0; cc < 8; cc++) {
-      const r = flip ? 7 - rr : rr, c = flip ? 7 - cc : cc; const p = board[r][c];
-      const cell = document.createElement('div'); cell.className = 'cell ' + ((r + c) % 2 === 0 ? 'light' : 'dark');
-      if (p) { cell.textContent = sym[p.color === 'w' ? p.type.toUpperCase() : p.type]; cell.classList.add(p.color === 'w' ? 'piece-w' : 'piece-b'); }
-      if (this.selected && this.selected.r === r && this.selected.c === c) cell.classList.add('selected');
-      cell.onclick = () => this.click(r, c); b.appendChild(cell);
+    gameAreaEl.innerHTML = `
+      <div class="tug-container">
+        <div class="tug-half tug-p1" onclick="TugOfWar.tap(1)">ИГРОК 1</div>
+        <div class="tug-half tug-p2" onclick="TugOfWar.tap(2)">ИГРОК 2</div>
+        <div class="tug-rope" id="tug-rope" style="left: ${this.pos}%"></div>
+      </div>`;
+    setStatus(gameMode === 'p2p' ? 'Жмите на свою половину!' : 'Жмите на свою половину!');
+  },
+  tap(player) {
+    if (this.done) return;
+    let move = (player === 1) ? -2 : 2;
+    this.pos += move;
+    if (document.getElementById('tug-rope')) document.getElementById('tug-rope').style.left = this.pos + '%';
+    
+    if (gameMode === 'p2p') {
+      // В P2P игрок 1 это Хост, Игрок 2 это Гость
+      if ((isHost && player === 1) || (!isHost && player === 2)) {
+        sendMove({ type: 'tap', val: move });
+      }
     }
-    if (!this.done) {
-      let s = gameMode === 'local' ? (this.game.turn() === 'w' ? 'Ход белых' : 'Ход чёрных') : (isMyTurn ? 'Ваш ход' : 'Ход противника');
-      if (this.game.in_check()) s += ' (шах!)'; setStatus(s);
+    this.checkWin();
+  },
+  receive(data) {
+    if (data.type === 'tap') {
+      this.pos += data.val;
+      if (document.getElementById('tug-rope')) document.getElementById('tug-rope').style.left = this.pos + '%';
+      this.checkWin();
     }
   },
-  click(r, c) {
-    if (this.done || (gameMode !== 'local' && !isMyTurn)) return;
-    if (this.selected) {
-      const from = String.fromCharCode(97 + this.selected.c) + (8 - this.selected.r);
-      const to = String.fromCharCode(97 + c) + (8 - r);
-      try {
-        if (this.game.move({ from, to, promotion: 'q' })) {
-          this.selected = null; this.render();
-          if (!this.checkEnd()) {
-            if (gameMode === 'p2p') { isMyTurn = false; sendMove({ from, to, promotion: 'q' }); }
-            else if (gameMode === 'bot' || gameMode === 'championship') { isMyTurn = false; triggerBotIfNeeded(); }
-          }
-          return;
-        }
-      } catch(e) {}
-    }
-    const piece = this.game.get(String.fromCharCode(97 + c) + (8 - r));
-    this.selected = (piece && piece.color === this.myColor()) ? { r, c } : null; this.render();
+  checkWin() {
+    if (this.pos <= 10) { this.done = true; setStatus('🎉 Победил Игрок 1!'); }
+    if (this.pos >= 90) { this.done = true; setStatus('🎉 Победил Игрок 2!'); }
+  }
+};
+
+// 3. РЕАКЦИЯ
+const ReactionTest = {
+  done: false, canClick: false, timer: null, startTime: 0,
+  init() { this.done = false; this.canClick = false; },
+  render() {
+    gameAreaEl.innerHTML = `
+      <div class="reaction-container">
+        <div class="reaction-half reaction-p1" id="rx-p1" onclick="ReactionTest.click(1)">ЖДИТЕ...</div>
+        <div class="reaction-half reaction-p2" id="rx-p2" onclick="ReactionTest.click(2)">ЖДИТЕ...</div>
+      </div>`;
+    setStatus('Приготовьтесь...');
+    
+    const delay = Math.random() * 3000 + 2000;
+    this.timer = setTimeout(() => {
+      this.canClick = true;
+      this.startTime = Date.now();
+      const p1 = document.getElementById('rx-p1');
+      const p2 = document.getElementById('rx-p2');
+      if(p1 && p2) {
+        p1.style.background = '#2ecc71'; p2.style.background = '#2ecc71';
+        p1.textContent = 'ЖМИ!'; p2.textContent = 'ЖМИ!';
+      }
+      setStatus('ЖМИ!');
+    }, delay);
   },
-  receive(data) { try { this.game.move(data); } catch(e) {} isMyTurn = true; this.render(); this.checkEnd(); },
-  checkEnd() {
-    if (this.game.in_checkmate()) {
+  click(player) {
+    if (this.done) return;
+    if (!this.canClick) {
+      clearTimeout(this.timer);
       this.done = true;
-      const win = this.game.turn() !== this.myColor();
-      setStatus(gameMode === 'local' ? (this.game.turn() === 'w' ? 'Мат. Победили чёрные' : 'Мат. Победили белые') : (win ? 'Мат. Вы победили' : 'Мат. Вы проиграли'));
-      if (gameMode !== 'local' && gameMode !== 'p2p') onGameEnd(win ? 'win' : 'lose', selectedGame, botLevel);
-      return true;
+      setStatus(`Игрок ${player} поторопился и проиграл!`);
+      return;
     }
-    if (this.game.in_draw() || this.game.in_stalemate() || this.game.in_threefold_repetition()) {
-      this.done = true; setStatus('Ничья'); if (gameMode !== 'local' && gameMode !== 'p2p') onGameEnd('draw', selectedGame, botLevel); return true;
-    }
-    return false;
-  },
-  botMove() {
-    if (this.done) return;
-    const moves = this.game.moves({verbose: true}); if (moves.length === 0) return;
-    let chosen = botLevel === 'easy' ? moves[Math.floor(Math.random() * moves.length)] : this.findBest(moves, botLevel === 'medium' ? 1 : 2, isHost ? 'b' : 'w');
-    this.game.move(chosen); this.render(); if (!this.checkEnd()) isMyTurn = true;
-  },
-  findBest(moves, depth, botColor) {
-    const botIsWhite = botColor === 'w'; let best = moves[0], bestScore = botIsWhite ? -Infinity : Infinity;
-    for (const m of moves) {
-      this.game.move(m); const score = this.minimax(depth - 1, !botIsWhite); this.game.undo();
-      if (botIsWhite ? score > bestScore : score < bestScore) { bestScore = score; best = m; }
-    }
-    return best;
-  },
-  minimax(depth, isWhiteTurn) {
-    if (depth <= 0 || this.game.game_over()) return this.evaluate();
-    const moves = this.game.moves(); if (moves.length === 0) return this.evaluate();
-    let best = isWhiteTurn ? -Infinity : Infinity;
-    for (const m of moves) { this.game.move(m); const s = this.minimax(depth-1, !isWhiteTurn); this.game.undo(); best = isWhiteTurn ? Math.max(best, s) : Math.min(best, s); }
-    return best;
-  },
-  evaluate() {
-    if (this.game.in_checkmate()) return this.game.turn() === 'w' ? -100000 : 100000;
-    if (this.game.in_draw() || this.game.in_stalemate()) return 0;
-    const vals = {p:100, n:320, b:330, r:500, q:900, k:20000}; const board = this.game.board(); let s = 0;
-    for (let r = 0; r < 8; r++) for (let c = 0; c < 8; c++) { const p = board[r][c]; if (p) s += (p.color === 'w' ? 1 : -1) * vals[p.type]; }
-    return s;
-  }
-};
-
-const RussianCheckers = {
-  board: null, selected: null, done: false, mustCapture: false, captureChain: null, turn: 'w',
-  init() {
-    this.board = Array(8).fill(null).map(() => Array(8).fill(null));
-    for (let r = 0; r < 3; r++) for (let c = 0; c < 8; c++) if ((r + c) % 2 === 1) this.board[r][c] = { color: 'b', king: false };
-    for (let r = 5; r < 8; r++) for (let c = 0; c < 8; c++) if ((r + c) % 2 === 1) this.board[r][c] = { color: 'w', king: false };
-    this.selected = null; this.done = false; this.mustCapture = false; this.captureChain = null; this.turn = 'w';
-  },
-  myColor() { return gameMode === 'local' ? this.turn : (isHost ? 'w' : 'b'); },
-  getCaptures(r, c) {
-    const p = this.board[r][c]; if (!p) return [];
-    const dirs = [[-1,-1],[-1,1],[1,-1],[1,1]]; const caps = [];
-    for (const [dr, dc] of dirs) {
-      if (p.king) {
-        let mr = r + dr, mc = c + dc, found = false, enemyR = -1, enemyC = -1;
-        while (mr >= 0 && mr < 8 && mc >= 0 && mc < 8) {
-          if (this.board[mr][mc]) { if (this.board[mr][mc].color !== p.color && !found) { found = true; enemyR = mr; enemyC = mc; } else break; }
-          mr += dr; mc += dc;
-        }
-        if (found) {
-          let landR = enemyR + dr, landC = enemyC + dc;
-          while (landR >= 0 && landR < 8 && landC >= 0 && landC < 8 && !this.board[landR][landC]) { caps.push({ r: landR, c: landC, cr: enemyR, cc: enemyC }); landR += dr; landC += dc; }
-        }
-      } else {
-        const mr = r + dr, mc = c + dc, nr = r + dr*2, nc = c + dc*2;
-        if (nr >= 0 && nr < 8 && nc >= 0 && nc < 8) { const mid = this.board[mr][mc]; if (mid && mid.color !== p.color && !this.board[nr][nc]) caps.push({ r: nr, c: nc, cr: mr, cc: mc }); }
-      }
-    }
-    return caps;
-  },
-  getAllCaptures(color) {
-    const all = [];
-    for (let r = 0; r < 8; r++) for (let c = 0; c < 8; c++) { const p = this.board[r][c]; if (p && p.color === color) for (const cap of this.getCaptures(r, c)) all.push({ from: {r, c}, ...cap }); }
-    return all;
-  },
-  getMoves(r, c) {
-    const p = this.board[r][c]; if (!p) return [];
-    const dirs = []; if (p.king) dirs.push([-1,-1],[-1,1],[1,-1],[1,1]); else if (p.color === 'w') dirs.push([-1,-1],[-1,1]); else dirs.push([1,-1],[1,1]);
-    const moves = [];
-    for (const [dr, dc] of dirs) {
-      if (p.king) { let nr = r + dr, nc = c + dc; while (nr >= 0 && nr < 8 && nc >= 0 && nc < 8 && !this.board[nr][nc]) { moves.push({ r: nr, c: nc }); nr += dr; nc += dc; } }
-      else { const nr = r + dr, nc = c + dc; if (nr >= 0 && nr < 8 && nc >= 0 && nc < 8 && !this.board[nr][nc]) moves.push({ r: nr, c: nc }); }
-    }
-    return moves;
-  },
-  render() {
-    gameAreaEl.innerHTML = '<div id="board" class="checkers-board"></div>';
-    const b = document.getElementById('board'); const flip = this.myColor() === 'b';
-    for (let rr = 0; rr < 8; rr++) for (let cc = 0; cc < 8; cc++) {
-      const r = flip ? 7 - rr : rr, c = flip ? 7 - cc : cc; const p = this.board[r][c];
-      const cell = document.createElement('div'); cell.className = 'cell ' + ((r + c) % 2 === 0 ? 'light' : 'dark');
-      if (p) { const sp = document.createElement('div'); sp.className = p.color === 'w' ? 'checker-w' : 'checker-b'; if (p.king) sp.textContent = 'K'; cell.appendChild(sp); }
-      if (this.selected && this.selected.r === r && this.selected.c === c) cell.classList.add('selected');
-      cell.onclick = () => this.click(r, c); b.appendChild(cell);
-    }
-    if (!this.done) {
-      if (this.captureChain) setStatus('Продолжайте взятие');
-      else if (this.mustCapture) setStatus('Обязательное взятие');
-      else setStatus(gameMode === 'local' ? (this.turn === 'w' ? 'Ход белых' : 'Ход чёрных') : (isMyTurn ? 'Ваш ход' : 'Ход противника'));
-    }
-  },
-  click(r, c) {
-    if (this.done || (gameMode !== 'local' && !isMyTurn)) return;
-    if (this.captureChain && (this.captureChain.r !== r || this.captureChain.c !== c)) return;
-    if (!this.captureChain) this.mustCapture = this.getAllCaptures(this.myColor()).length > 0;
-    if (this.selected) {
-      const sel = this.selected, piece = this.board[sel.r][sel.c];
-      const capMove = this.getCaptures(sel.r, sel.c).find(m => m.r === r && m.c === c);
-      if (capMove) {
-        this.board[sel.r][sel.c] = null; this.board[capMove.cr][capMove.cc] = null; this.board[r][c] = piece;
-        if (!piece.king && ((piece.color === 'w' && r === 0) || (piece.color === 'b' && r === 7))) piece.king = true;
-        this.selected = null; this.render();
-        const more = this.getCaptures(r, c);
-        if (more.length > 0) { this.captureChain = { r, c }; this.render(); setStatus('Продолжайте взятие'); return; }
-        this.captureChain = null; this.mustCapture = false;
-        this.endTurn({ from: {r: sel.r, c: sel.c}, to: {r, c}, capture: {r: capMove.cr, c: capMove.cc} });
-        return;
-      }
-      if (!this.mustCapture) {
-        const mv = this.getMoves(sel.r, sel.c).find(m => m.r === r && m.c === c);
-        if (mv) {
-          this.board[sel.r][sel.c] = null; this.board[r][c] = piece;
-          if (!piece.king && ((piece.color === 'w' && r === 0) || (piece.color === 'b' && r === 7))) piece.king = true;
-          this.selected = null;
-          this.endTurn({ from: {r: sel.r, c: sel.c}, to: {r, c} });
-          return;
-        }
-      }
-    }
-    const p = this.board[r][c];
-    if (p && p.color === this.myColor()) {
-      if (this.mustCapture && this.getCaptures(r, c).length === 0) { setStatus('Эта шашка не может бить'); return; }
-      this.selected = { r, c };
-    } else this.selected = null;
-    this.render();
-  },
-  endTurn(moveData) {
-    this.render();
-    if (!this.checkEnd()) {
-      if (gameMode === 'local') { this.turn = this.turn === 'w' ? 'b' : 'w'; this.render(); }
-      else if (gameMode === 'p2p') { isMyTurn = false; sendMove(moveData); }
-      else { isMyTurn = false; triggerBotIfNeeded(); }
+    this.done = true;
+    setStatus(`🎉 Игрок ${player} победил!`);
+    gameAreaEl.innerHTML = `<div style="text-align:center; padding: 20px;"><h2 style="color: var(--seal);">Быстрее всех Игрок ${player}!</h2></div>`;
+    
+    if (gameMode === 'p2p' && ((isHost && player === 1) || (!isHost && player === 2))) {
+      sendMove({ type: 'rx_win', player });
     }
   },
   receive(data) {
-    const { from, to, capture } = data;
-    const piece = this.board[from.r][from.c];
-    this.board[from.r][from.c] = null; if (capture) this.board[capture.r][capture.c] = null; this.board[to.r][to.c] = piece;
-    if (!piece.king && ((piece.color === 'w' && to.r === 0) || (piece.color === 'b' && to.r === 7))) piece.king = true;
-    isMyTurn = true; this.mustCapture = false; this.captureChain = null; this.render(); this.checkEnd();
-  },
-  checkEnd() {
-    let w = 0, b = 0;
-    for (let r = 0; r < 8; r++) for (let c = 0; c < 8; c++) { const p = this.board[r][c]; if (p) p.color === 'w' ? w++ : b++; }
-    if ((this.myColor() === 'w' && b === 0) || (this.myColor() === 'b' && w === 0)) { this.done = true; setStatus(gameMode === 'local' ? 'Победа' : 'Вы победили'); if(gameMode !== 'local' && gameMode !== 'p2p') onGameEnd('win', selectedGame, botLevel); return true; }
-    if ((this.myColor() === 'w' && w === 0) || (this.myColor() === 'b' && b === 0)) { this.done = true; setStatus(gameMode === 'local' ? 'Победа' : 'Вы проиграли'); if(gameMode !== 'local' && gameMode !== 'p2p') onGameEnd('lose', selectedGame, botLevel); return true; }
-    return false;
-  },
-  botMove() {
-    if (this.done) return;
-    const botColor = isHost ? 'b' : 'w'; const caps = this.getAllCaptures(botColor);
-    const allMoves = caps.length > 0 ? caps.map(c => ({...c, isCapture: true})) : (() => {
-      const m = []; for (let r = 0; r < 8; r++) for (let c = 0; c < 8; c++) { const p = this.board[r][c]; if (p && p.color === botColor) for (const mv of this.getMoves(r, c)) m.push({ from: {r, c}, ...mv, isCapture: false }); } return m;
-    })();
-    if (allMoves.length === 0) return;
-    this.executeBotMove(allMoves[Math.floor(Math.random() * allMoves.length)], botColor);
-  },
-  executeBotMove(m, color) {
-    const piece = this.board[m.from.r][m.from.c];
-    this.board[m.from.r][m.from.c] = null; if (m.cr !== undefined) this.board[m.cr][m.cc] = null; this.board[m.r][m.c] = piece;
-    if (!piece.king && ((piece.color === 'w' && m.r === 0) || (piece.color === 'b' && m.r === 7))) piece.king = true;
-    if (m.isCapture) {
-      const further = this.getCaptures(m.r, m.c);
-      if (further.length > 0) { this.render(); botDelay(() => { if (!this.done) this.executeBotMove({ from: {r: m.r, c: m.c}, ...further[Math.floor(Math.random() * further.length)], isCapture: true }, color); }); return; }
-    }
-    this.render(); if (!this.checkEnd()) isMyTurn = true;
+    if (data.type === 'rx_win') { this.done = true; setStatus(`🎉 Игрок ${data.player} победил (по сети)!`); }
   }
 };
 
+// 4. 4 В РЯД
 const Connect4 = {
   board: null, turn: 'R', done: false,
   init() { this.board = Array(6).fill(null).map(() => Array(7).fill('')); this.turn = 'R'; this.done = false; },
   render() {
     gameAreaEl.innerHTML = '<div id="board" class="c4-board"></div>';
-    const b = document.getElementById('board');
-    for (let r = 0; r < 6; r++) for (let c = 0; c < 7; c++) {
-      const cell = document.createElement('div'); cell.className = 'cell';
-      if (this.board[r][c] === 'R') cell.classList.add('red');
-      if (this.board[r][c] === 'Y') cell.classList.add('yellow');
-      cell.onclick = () => this.click(c); b.appendChild(cell);
-    }
-    if (!this.done) setStatus(gameMode === 'local' ? `Ход: ${this.turn === 'R' ? 'Красные' : 'Жёлтые'}` : (isMyTurn ? 'Ваш ход' : 'Ход противника'));
+    document.getElementById('board').innerHTML = this.board.map((row, r) => 
+      row.map((v, c) => `<div class="cell ${v==='R'?'red':v==='Y'?'yellow':''}" onclick="Connect4.click(${c})"></div>`).join('')
+    ).join('');
+    if (!this.done) setStatus(gameMode === 'local' ? `Ход: ${this.turn}` : (isMyTurn ? 'Ваш ход' : 'Ход противника'));
   },
   click(c) {
     if (this.done || (gameMode !== 'local' && !isMyTurn)) return;
@@ -932,7 +564,6 @@ const Connect4 = {
   },
   receive(data) {
     let r = -1; for (let i = 5; i >= 0; i--) if (!this.board[i][data.col]) { r = i; break; }
-    if (r === -1) return;
     this.board[r][data.col] = isHost ? 'Y' : 'R'; isMyTurn = true; this.render(); this.checkWin(r, data.col);
   },
   checkWin(r, c) {
@@ -942,179 +573,80 @@ const Connect4 = {
       let count = 1;
       for (let s = 1; s < 4; s++) { const nr = r + dr*s, nc = c + dc*s; if (nr<0||nr>=6||nc<0||nc>=7||this.board[nr][nc]!==color) break; count++; }
       for (let s = 1; s < 4; s++) { const nr = r - dr*s, nc = c - dc*s; if (nr<0||nr>=6||nc<0||nc>=7||this.board[nr][nc]!==color) break; count++; }
-      if (count >= 4) { this.done = true; 
-        if(gameMode === 'local') setStatus(`Победили ${color === 'R' ? 'Красные' : 'Жёлтые'}`);
-        else {
-          const win = color === (isHost ? 'R' : 'Y');
-          setStatus(win ? 'Вы победили' : 'Вы проиграли');
-          if(gameMode === 'p2p') sendMove({ type: 'gameover', result: win ? 'win' : 'lose' });
-          else onGameEnd(win ? 'win' : 'lose', selectedGame, botLevel);
-        }
-        return true; 
-      }
+      if (count >= 4) { this.done = true; setStatus(`🎉 Победили ${color === 'R' ? 'Красные' : 'Жёлтые'}`); return true; }
     }
-    if (this.board[0].every(v => v)) { this.done = true; setStatus('Ничья'); if(gameMode !== 'local' && gameMode !== 'p2p') onGameEnd('draw', selectedGame, botLevel); return true; }
+    if (this.board[0].every(v => v)) { this.done = true; setStatus('Ничья'); return true; }
     return false;
   },
   botMove() {
     if (this.done) return;
-    const botSym = isHost ? 'Y' : 'R';
     let free = []; for (let c = 0; c < 7; c++) if (!this.board[0][c]) free.push(c);
-    if (free.length === 0) return;
     let col = free[Math.floor(Math.random() * free.length)];
     let r = -1; for (let i = 5; i >= 0; i--) if (!this.board[i][col]) { r = i; break; }
-    this.board[r][col] = botSym; this.render(); if (!this.checkWin(r, col)) isMyTurn = true;
+    this.board[r][col] = 'Y'; isMyTurn = true; this.render(); this.checkWin(r, col);
   }
 };
 
-const Battleship = {
-  shipsAtMe: null, shotsAtMe: null, shotsByMe: null, done: false, placing: false, placingIndex: 0, placingDir: 'h', placedShips: [], botQueue: [], shipsBot: null,
-  get SIZE() { return bsSize; },
-  get shipSizes() { return [4, 3, 3, 2, 2, 2, 1, 1, 1, 1]; },
-  init() {
-    const S = this.SIZE;
-    this.shipsAtMe = Array(S).fill(null).map(() => Array(S).fill(false));
-    this.shotsAtMe = Array(S).fill(null).map(() => Array(S).fill(''));
-    this.shotsByMe = Array(S).fill(null).map(() => Array(S).fill(''));
-    this.done = false; this.placing = true; this.placingIndex = 0; this.placingDir = 'h'; this.placedShips = []; this.botQueue = []; this.shipsBot = null;
-    this.render();
-  },
-  canPlace(r, c, size, horiz, board) {
-    const S = this.SIZE;
-    for (let i = 0; i < size; i++) {
-      const rr = r + (horiz ? 0 : i), cc = c + (horiz ? i : 0);
-      if (rr < 0 || rr >= S || cc < 0 || cc >= S || board[rr][cc]) return false;
-      for (let dr = -1; dr <= 1; dr++) for (let dc = -1; dc <= 1; dc++) {
-        const nr = rr + dr, nc = cc + dc;
-        if (nr >= 0 && nr < S && nc >= 0 && nc < S && board[nr][nc]) return false;
-      }
-    }
-    return true;
-  },
-  randomPlace() {
-    const S = this.SIZE; this.shipsAtMe = Array(S).fill(null).map(() => Array(S).fill(false)); this.placedShips = [];
-    for (const size of this.shipSizes) {
-      let placed = false, tries = 0;
-      while (!placed && tries < 1000) {
-        tries++; const horiz = Math.random() < 0.5;
-        const r = Math.floor(Math.random() * (horiz ? S : S - size + 1)); const c = Math.floor(Math.random() * (horiz ? S - size + 1 : S));
-        if (this.canPlace(r, c, size, horiz, this.shipsAtMe)) {
-          for (let i = 0; i < size; i++) { const rr = r + (horiz ? 0 : i), cc = c + (horiz ? i : 0); this.shipsAtMe[rr][cc] = true; }
-          this.placedShips.push({ r, c, size, horiz }); placed = true;
-        }
-      }
-    }
-  },
-  clickPlace(r, c) {
-    if (!this.placing) return;
-    const size = this.shipSizes[this.placingIndex];
-    if (this.canPlace(r, c, size, this.placingDir === 'h', this.shipsAtMe)) {
-      for (let i = 0; i < size; i++) { const rr = r + (this.placingDir === 'h' ? 0 : i); const cc = c + (this.placingDir === 'h' ? i : 0); this.shipsAtMe[rr][cc] = true; }
-      this.placedShips.push({ r, c, size, horiz: this.placingDir === 'h' }); this.placingIndex++;
-      if (this.placingIndex >= this.shipSizes.length) { this.finishPlacement(); return; }
-    }
-    this.render();
-  },
-  finishPlacement() {
-    this.placing = false;
-    if (gameMode === 'p2p') { sendMove({ type: 'placement', ships: this.placedShips }); if (isMyTurn) this.render(); else setStatus('Ожидание расстановки противника'); }
-    else { isMyTurn = true; this.render(); }
-  },
+// 5. ШАХМАТЫ (Упрощенные для скрипта)
+const ChessG = {
+  game: null, selected: null, done: false,
+  init() { this.game = new Chess(); this.selected = null; this.done = false; },
+  myColor() { return gameMode === 'local' ? this.game.turn() : (isHost ? 'w' : 'b'); },
   render() {
-    const S = this.SIZE; const cellSize = S === 8 ? 'min(8vw, 30px)' : 'min(6vw, 25px)';
-    if (this.placing) {
-      const size = this.shipSizes[this.placingIndex]; const dirText = this.placingDir === 'h' ? 'горизонтально' : 'вертикально';
-      gameAreaEl.innerHTML = `
-        <div style="text-align:center; width:100%;">
-          <div style="margin-bottom:15px; font-family:'Courier New'; font-weight:bold;">Расставьте корабль <b>${size}</b> (${dirText})<br>Осталось: ${this.shipSizes.length - this.placingIndex}</div>
-          <div class="btn-row" style="margin-bottom:15px; margin-top:0;">
-            <button id="toggleDir" class="btn btn-secondary" style="padding:8px 12px; font-size:11px;">Повернуть</button>
-            <button id="randomBtn" class="btn btn-secondary" style="padding:8px 12px; font-size:11px;">Случайно</button>
-          </div>
-          <div id="place-board" class="bs-board" style="margin:0 auto; width:fit-content; grid-template-columns:repeat(${S},${cellSize}); grid-template-rows:repeat(${S},${cellSize});"></div>
-        </div>`;
-      document.getElementById('toggleDir').onclick = () => { this.placingDir = this.placingDir === 'h' ? 'v' : 'h'; this.render(); };
-      document.getElementById('randomBtn').onclick = () => { this.randomPlace(); this.finishPlacement(); };
-      const pb = document.getElementById('place-board');
-      for (let r = 0; r < S; r++) for (let c = 0; c < S; c++) {
-        const cell = document.createElement('div'); cell.className = 'cell';
-        if (this.shipsAtMe[r][c]) cell.classList.add('ship');
-        cell.onclick = () => this.clickPlace(r, c); pb.appendChild(cell);
-      }
-      return;
-    }
-    gameAreaEl.innerHTML = `<div class="bs-container">
-        <div><div class="bs-title">Ваши корабли</div><div id="my-bs" class="bs-board" style="grid-template-columns:repeat(${S},${cellSize});grid-template-rows:repeat(${S},${cellSize})"></div></div>
-        <div><div class="bs-title">Поле противника</div><div id="en-bs" class="bs-board" style="grid-template-columns:repeat(${S},${cellSize});grid-template-rows:repeat(${S},${cellSize})"></div></div>
+    gameAreaEl.innerHTML = '<div id="board" class="chess-board"></div>';
+    const board = this.game.board();
+    const sym = {p:'♟',n:'♞',b:'♝',r:'♜',q:'♛',k:'♚',P:'♙',N:'♘',B:'♗',R:'♖',Q:'♕',K:'♔'};
+    const flip = this.myColor() === 'b';
+    let html = '';
+    for (let rr = 0; rr < 8; rr++) for (let cc = 0; cc < 8; cc++) {
+      const r = flip ? 7 - rr : rr, c = flip ? 7 - cc : cc; const p = board[r][c];
+      html += `<div class="cell ${(r + c) % 2 === 0 ? 'light' : 'dark'}" onclick="ChessG.click(${r},${c})" style="color:${p&&p.color==='w'?'#fff':'#111'}">
+        ${p ? sym[p.color === 'w' ? p.type.toUpperCase() : p.type] : ''}
       </div>`;
-    const mb = document.getElementById('my-bs'); const eb = document.getElementById('en-bs');
-    for (let r = 0; r < S; r++) for (let c = 0; c < S; c++) {
-      const mc = document.createElement('div'); mc.className = 'cell';
-      if (this.shipsAtMe[r][c]) mc.classList.add('ship');
-      const st = this.shotsAtMe[r][c]; if (st === 'hit') mc.classList.add('hit'); else if (st === 'miss') mc.classList.add('miss');
-      mb.appendChild(mc);
-      const ec = document.createElement('div'); ec.className = 'cell';
-      const sb = this.shotsByMe[r][c]; if (sb === 'hit') ec.classList.add('hit'); else if (sb === 'miss') ec.classList.add('miss');
-      ec.onclick = () => this.click(r, c); eb.appendChild(ec);
     }
-    if (!this.done) setStatus(isMyTurn ? 'Ваш выстрел' : 'Ход противника');
+    document.getElementById('board').innerHTML = html;
+    if (!this.done) setStatus(gameMode === 'local' ? (this.game.turn() === 'w' ? 'Ход белых' : 'Ход чёрных') : (isMyTurn ? 'Ваш ход' : 'Ход противника'));
   },
   click(r, c) {
-    if (this.placing || this.done || !isMyTurn || this.shotsByMe[r][c]) return;
-    if (gameMode === 'p2p') { sendMove({ fire: { r, c } }); isMyTurn = false; setStatus('Ожидание результата'); }
-    else { this.playerFire(r, c); if (!this.done) triggerBotIfNeeded(); }
-  },
-  playerFire(r, c) {
-    const hit = this.shipsBot ? this.shipsBot[r][c] : false;
-    this.shotsByMe[r][c] = hit ? 'hit' : 'miss';
-    let allSunk = true; if (this.shipsBot) { for (let rr = 0; rr < this.SIZE; rr++) for (let cc = 0; cc < this.SIZE; cc++) if (this.shipsBot[rr][cc] && this.shotsByMe[rr][cc] !== 'hit') allSunk = false; }
-    if (allSunk && this.shipsBot) { this.done = true; setStatus('Вы победили'); onGameEnd('win', selectedGame, botLevel); } else if (hit) setStatus('Попадание'); else { setStatus('Промах'); isMyTurn = false; }
-    this.render();
-  },
-  receive(data) {
-    if (data.type === 'placement') { this.placing = false; this.render(); return; }
-    if (data.fire) {
-      const { r, c } = data.fire; const hit = this.shipsAtMe[r][c];
-      this.shotsAtMe[r][c] = hit ? 'hit' : 'miss';
-      let allSunk = true; for (let rr = 0; rr < this.SIZE; rr++) for (let cc = 0; cc < this.SIZE; cc++) if (this.shipsAtMe[rr][cc] && this.shotsAtMe[rr][cc] !== 'hit') allSunk = false;
-      sendMove({ result: { r, c, hit, gameOver: allSunk } });
-      if (allSunk) { this.done = true; setStatus('Вы проиграли'); } else isMyTurn = !hit;
-      this.render();
-    } else if (data.result) {
-      const { r, c, hit, gameOver } = data.result; this.shotsByMe[r][c] = hit ? 'hit' : 'miss';
-      if (gameOver) { this.done = true; setStatus('Вы победили'); } else isMyTurn = hit;
-      this.render();
+    if (this.done || (gameMode !== 'local' && !isMyTurn)) return;
+    if (this.selected) {
+      const from = String.fromCharCode(97 + this.selected.c) + (8 - this.selected.r);
+      const to = String.fromCharCode(97 + c) + (8 - r);
+      try {
+        if (this.game.move({ from, to, promotion: 'q' })) {
+          this.selected = null; this.render();
+          if (!this.checkEnd()) {
+            if (gameMode === 'p2p') { isMyTurn = false; sendMove({ from, to }); }
+            else if (gameMode === 'bot') { isMyTurn = false; triggerBotIfNeeded(); }
+          }
+          return;
+        }
+      } catch(e) {}
     }
+    const piece = this.game.get(String.fromCharCode(97 + c) + (8 - r));
+    this.selected = (piece && piece.color === this.myColor()) ? { r, c } : null; this.render();
+  },
+  receive(data) { try { this.game.move(data); } catch(e) {} isMyTurn = true; this.render(); this.checkEnd(); },
+  checkEnd() {
+    if (this.game.in_checkmate()) { this.done = true; setStatus('Мат!'); return true; }
+    if (this.game.in_draw()) { this.done = true; setStatus('Ничья'); return true; }
+    return false;
   },
   botMove() {
-    if (this.done) return; const S = this.SIZE;
-    if (!this.shipsBot) {
-      this.shipsBot = Array(S).fill(null).map(() => Array(S).fill(false));
-      for (const size of this.shipSizes) {
-        let placed = false, tries = 0;
-        while (!placed && tries < 1000) {
-          tries++; const horiz = Math.random() < 0.5;
-          const r = Math.floor(Math.random() * (horiz ? S : S - size + 1)); const c = Math.floor(Math.random() * (horiz ? S - size + 1 : S));
-          if (this.canPlace(r, c, size, horiz, this.shipsBot)) { for (let i = 0; i < size; i++) { const rr = r + (horiz ? 0 : i), cc = c + (horiz ? i : 0); this.shipsBot[rr][cc] = true; } placed = true; }
-        }
-      }
-    }
-    let target = null;
-    if (botLevel !== 'easy') { while (this.botQueue.length > 0 && !target) { const t = this.botQueue.shift(); if (!this.shotsAtMe[t.r][t.c]) target = t; } }
-    if (!target) {
-      const avail = []; for (let r = 0; r < S; r++) for (let c = 0; c < S; c++) { if (this.shotsAtMe[r][c]) continue; if (botLevel === 'hard' && (r + c) % 2 !== 0) continue; avail.push({ r, c }); }
-      if (avail.length === 0) { for (let r = 0; r < S; r++) for (let c = 0; c < S; c++) if (!this.shotsAtMe[r][c]) avail.push({ r, c }); }
-      target = avail[Math.floor(Math.random() * avail.length)];
-    }
-    if (!target) return; const { r, c } = target; const hit = this.shipsAtMe[r][c];
-    this.shotsAtMe[r][c] = hit ? 'hit' : 'miss';
-    if (hit && botLevel !== 'easy') { for (const [dr, dc] of [[0,1],[1,0],[0,-1],[-1,0]]) { const nr = r + dr, nc = c + dc; if (nr >= 0 && nr < S && nc >= 0 && nc < S && !this.shotsAtMe[nr][nc]) this.botQueue.push({ r: nr, c: nc }); } }
-    let allSunk = true; for (let rr = 0; rr < S; rr++) for (let cc = 0; cc < S; cc++) if (this.shipsAtMe[rr][cc] && this.shotsAtMe[rr][cc] !== 'hit') allSunk = false;
-    this.render();
-    if (allSunk) { this.done = true; setStatus('Вы проиграли'); onGameEnd('lose', selectedGame, botLevel); return; }
-    if (hit) { setStatus('Бот попал'); botDelay(() => { if (!this.done) this.botMove(); }); } else { setStatus('Бот промахнулся. Ваш ход'); isMyTurn = true; }
+    const moves = this.game.moves(); if (!moves.length) return;
+    this.game.move(moves[Math.floor(Math.random() * moves.length)]);
+    isMyTurn = true; this.render(); this.checkEnd();
   }
 };
+
+// 6. ШАШКИ (Базовая версия)
+const Checkers = {
+  init() {}, 
+  render() { gameAreaEl.innerHTML = '<div style="padding: 20px; text-align:center;">Шашки в разработке. Скоро!</div>'; },
+  receive() {}
+};
+
+updateSettings();
 </script>
 </body>
 </html>
