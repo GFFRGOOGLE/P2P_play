@@ -166,7 +166,7 @@ h1 { font-size: clamp(24px, 5vw, 40px); margin-bottom: 20px; letter-spacing: 0.0
         <select id="mode">
           <option value="bot">С ботом</option>
           <option value="local">Локально (2 игрока)</option>
-          <option value="p2p">Онлайн P2P (Безопасная ссылка)</option>
+          <option value="p2p">Онлайн P2P (Код)</option>
         </select>
       </div>
       <div class="setting-row" id="levelRow">
@@ -177,7 +177,8 @@ h1 { font-size: clamp(24px, 5vw, 40px); margin-bottom: 20px; letter-spacing: 0.0
           <option value="hard">Сложный</option>
         </select>
       </div>
-      <div class="setting-row" id="sizeRow">
+      <!-- Изначально скрываем настройку размера поля! -->
+      <div class="setting-row hidden" id="sizeRow">
         <label>Размер поля (Морской бой)</label>
         <select id="bsSize">
           <option value="8">8×8 (быстрый)</option>
@@ -194,28 +195,32 @@ h1 { font-size: clamp(24px, 5vw, 40px); margin-bottom: 20px; letter-spacing: 0.0
       <button id="backBtn" class="btn btn-secondary hidden">Вернуться в меню</button>
     </div>
 
-    <!-- Блок P2P по ссылке -->
     <div id="p2pUI" class="hidden p2p-box">
       <div id="hostUI">
-        <p style="font-size:12px; color:var(--ink-soft); margin-bottom:8px;">1. Создайте защищенную ссылку и отправьте её другу.</p>
-        <button id="genLinkBtn" class="btn-seal" style="margin-bottom:10px; width:100%;">Создать ссылку-приглашение</button>
-        <input type="text" id="hostLinkOut" readonly placeholder="Здесь появится ссылка...">
+        <p style="font-size:12px; color:var(--ink-soft); margin-bottom:8px;">1. Нажмите кнопку, скопируйте код и отправьте другу.</p>
+        <button id="genCodeBtn" class="btn-seal" style="margin-bottom:10px; width:100%;">Создать код</button>
+        <input type="text" id="hostCodeOut" readonly placeholder="Здесь появится ваш код...">
+        <p style="font-size:12px; color:var(--ink-soft); margin:10px 0 8px;">2. Вставьте ответный код друга:</p>
+        <input type="text" id="guestCodeIn" placeholder="Ответный код друга">
+        <button id="finishConnBtn" style="margin-top:10px; width:100%;">Завершить подключение</button>
       </div>
       <div id="guestUI" class="hidden">
-        <p style="font-size:12px; color:var(--ink-soft); margin-bottom:8px;">Вы перешли по ссылке приглашения. Ожидайте подключения или нажмите кнопку.</p>
-        <button id="joinLinkBtn" class="btn-seal" style="margin-bottom:10px; width:100%;">Подключиться к игре</button>
+        <p style="font-size:12px; color:var(--ink-soft); margin-bottom:8px;">1. Вставьте код приглашения от друга:</p>
+        <input type="text" id="hostCodeIn" placeholder="Код приглашения">
+        <button id="joinGameBtn" class="btn-seal" style="margin-top:10px; width:100%;">Сгенерировать ответ</button>
+        <p style="font-size:12px; color:var(--ink-soft); margin:10px 0 8px;">2. Скопируйте ответный код и отправьте другу:</p>
+        <input type="text" id="guestCodeOut" readonly placeholder="Здесь появится ответный код...">
       </div>
       <div id="connectStatus" class="connect-status"></div>
     </div>
   </div>
 </div>
 
-<!-- Модальное окно достижений -->
 <div class="modal" id="achModal">
   <div class="modal-content">
     <div class="modal-header">
       <span>Достижения</span>
-      <button class="modal-close" id="closeAchModal">×</button>
+      <button class="modal-close" onclick="document.getElementById('achModal').classList.remove('open')">×</button>
     </div>
     <div class="modal-body" id="achList"></div>
   </div>
@@ -226,9 +231,8 @@ h1 { font-size: clamp(24px, 5vw, 40px); margin-bottom: 20px; letter-spacing: 0.0
   <div class="name" id="achToastName"></div>
 </div>
 
-<script type="module">
-import { joinRoom } from 'https://esm.run/trystero';
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
+<script>
 // ========== СИСТЕМА СОХРАНЕНИЙ ==========
 const SaveManager = {
   data: { achievements: [], stats: { played: 0, wins: 0, losses: 0, draws: 0 }, champWins: 0 },
@@ -298,7 +302,6 @@ function renderAchievements() {
 }
 
 document.getElementById('btn-achievements').onclick = () => { renderAchievements(); document.getElementById('achModal').classList.add('open'); };
-document.getElementById('closeAchModal').onclick = () => document.getElementById('achModal').classList.remove('open');
 
 function onGameEnd(result, gameName, difficulty) {
   if (result === 'win') {
@@ -315,25 +318,6 @@ function onGameEnd(result, gameName, difficulty) {
   else if (result === 'draw') SaveManager.addStat('draw');
 }
 
-// ========== ЧЕМПИОНАТ ==========
-document.getElementById('btn-championship').onclick = () => {
-  if (room) { alert('Завершите текущую P2P игру!'); return; }
-  const games = ['tictactoe', 'chess', 'checkers', 'connect4', 'battleship'];
-  const diffs = ['medium', 'hard'];
-  const randomGame = games[Math.floor(Math.random() * games.length)];
-  const randomDiff = diffs[Math.floor(Math.random() * diffs.length)];
-  
-  document.querySelectorAll('#menu button').forEach(b => b.classList.remove('active'));
-  document.querySelector(`#menu button[data-game="${randomGame}"]`).classList.add('active');
-  document.getElementById('mode').value = 'bot';
-  document.getElementById('level').value = randomDiff;
-  
-  selectedGame = randomGame; gameMode = 'championship'; botLevel = randomDiff; bsSize = 10;
-  updateSettingsVisibility(); isHost = true;
-  alert(`ЧЕМПИОНАТ!\nИгра: ${randomGame.toUpperCase()}\nСложность: ${randomDiff.toUpperCase()}\nУдачи!`);
-  startGame(selectedGame, true);
-};
-
 // ========== ТЕМА ==========
 const themeToggle = document.getElementById('theme-toggle');
 const savedTheme = localStorage.getItem('theme') || 'light';
@@ -345,88 +329,57 @@ themeToggle.addEventListener('click', () => {
   themeToggle.textContent = isDark ? 'Светлая тема' : 'Тёмная тема';
 });
 
-// ========== БЕЗОПАСНЫЙ P2P ЧЕРЕЗ TRYSTERO ==========
-const APP_ID = 'minigames-pro-secure-v1';
-let room = null;
-let isHost = false;
-let isMyTurn = false;
-
-function generateSecureRoomId() {
-  const array = new Uint8Array(16); // 128 бит
-  window.crypto.getRandomValues(array);
-  return Array.from(array, b => b.toString(16).padStart(2, '0')).join('');
-}
-
-function joinGameRoom(roomId, host) {
-  isHost = host;
-  // ID комнаты используется и как пароль для шифрования канала
-  room = joinRoom({ appId: APP_ID }, roomId, roomId);
-
-  room.onPeerJoin = (peerId) => {
-    // ЗАЩИТА ОТ ПОДБОРА: Пускаем только 1 гостя (всего 2 игрока)
-    const peers = Object.keys(room.getPeers());
-    if (peers.length > 1) {
-      console.warn("Комната заполнена. Отклонено:", peerId);
-      return; 
-    }
-    
-    document.getElementById('connectStatus').textContent = 'Соединение установлено!';
-    if (isHost) {
-      room.makeAction('start')({ game: selectedGame, bsSize: parseInt(bsSizeSel.value) });
-      startGame(selectedGame, true);
-    }
-  };
-
-  room.makeAction('start').onMessage = (data) => {
-    startGame(data.game, false, data.bsSize);
-  };
-
-  // Обработка ходов
-  room.makeAction('move').onMessage = (data) => {
-    if (currentGame && currentGame.receive) currentGame.receive(data);
-  };
-  
-  room.makeAction('gameover').onMessage = (data) => {
-    const msg = data.result === 'win' ? 'Вы проиграли' : (data.result === 'lose' ? 'Вы победили' : 'Ничья');
-    setStatus(msg);
-    currentGame.done = true;
-  };
-}
-
-function sendMove(data) {
-  if (room) room.makeAction('move')(data);
-}
-
-// Обработка ссылок при загрузке
-window.addEventListener('DOMContentLoaded', () => {
-  const params = new URLSearchParams(location.search);
-  const roomId = params.get('room');
-  
-  if (roomId) {
-    // Это гость
-    document.querySelectorAll('#menu button').forEach(b => b.disabled = true);
-    modeSel.value = 'p2p'; updateSettingsVisibility();
-    hostUI.classList.add('hidden'); guestUI.classList.remove('hidden');
-    document.getElementById('connectStatus').textContent = 'Вас пригласили в игру. Ожидание соединения...';
-    startBtn.classList.add('hidden');
-    
-    // Подключаемся автоматически
-    joinGameRoom(roomId, false);
+// ========== РУЧНОЙ WEBRTC (С КОДАМИ) ==========
+class ManualP2P {
+  constructor() { this.pc = null; this.channel = null; this.onData = null; this.onOpen = null; }
+  async createOffer() {
+    this.pc = new RTCPeerConnection({ iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] });
+    this.channel = this.pc.createDataChannel('game');
+    this.setupChannel();
+    const candidates = [];
+    this.pc.onicecandidate = e => { if (e.candidate) candidates.push(e.candidate); };
+    await this.pc.setLocalDescription(await this.pc.createOffer());
+    return new Promise(resolve => {
+      const check = () => {
+        if (this.pc.iceGatheringState === 'complete') {
+          resolve(btoa(unescape(encodeURIComponent(JSON.stringify({ sdp: this.pc.localDescription.sdp, candidates })))));
+        }
+      };
+      this.pc.onicegatheringstatechange = check;
+      setTimeout(check, 2000);
+    });
   }
-});
+  async acceptOffer(code) {
+    const data = JSON.parse(decodeURIComponent(escape(atob(code))));
+    this.pc = new RTCPeerConnection({ iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] });
+    this.pc.ondatachannel = e => { this.channel = e.channel; this.setupChannel(); };
+    await this.pc.setRemoteDescription(new RTCSessionDescription({ type: 'offer', sdp: data.sdp }));
+    for (const c of data.candidates) await this.pc.addIceCandidate(new RTCIceCandidate(c));
+    const candidates = [];
+    this.pc.onicecandidate = e => { if (e.candidate) candidates.push(e.candidate); };
+    await this.pc.setLocalDescription(await this.pc.createAnswer());
+    return new Promise(resolve => {
+      const check = () => {
+        if (this.pc.iceGatheringState === 'complete') {
+          resolve(btoa(unescape(encodeURIComponent(JSON.stringify({ sdp: this.pc.localDescription.sdp, candidates })))));
+        }
+      };
+      this.pc.onicegatheringstatechange = check;
+      setTimeout(check, 2000);
+    });
+  }
+  async acceptAnswer(code) {
+    const data = JSON.parse(decodeURIComponent(escape(atob(code))));
+    await this.pc.setRemoteDescription(new RTCSessionDescription({ type: 'answer', sdp: data.sdp }));
+    for (const c of data.candidates) await this.pc.addIceCandidate(new RTCIceCandidate(c));
+  }
+  setupChannel() { this.channel.onopen = () => { if (this.onOpen) this.onOpen(); }; this.channel.onmessage = e => { if (this.onData) this.onData(JSON.parse(e.data)); }; }
+  send(data) { if (this.channel && this.channel.readyState === 'open') this.channel.send(JSON.stringify(data)); }
+  close() { if (this.channel) this.channel.close(); if (this.pc) this.pc.close(); }
+}
 
-// Создание ссылки
-document.getElementById('genLinkBtn').onclick = () => {
-  if (room) return;
-  const roomId = generateSecureRoomId();
-  const link = `${location.origin}${location.pathname}?room=${roomId}`;
-  document.getElementById('hostLinkOut').value = link;
-  document.getElementById('connectStatus').textContent = 'Ссылка создана. Ждем друга...';
-  document.getElementById('genLinkBtn').disabled = true;
-  joinGameRoom(roomId, true);
-};
-
-// ========== UI LOGIC ==========
+// ========== GLOBAL STATE ==========
+let p2p = null, isHost = false, isMyTurn = false;
 let selectedGame = 'tictactoe';
 let currentGame = null;
 let gameMode = 'bot';
@@ -446,13 +399,14 @@ const p2pUI = document.getElementById('p2pUI');
 const hostUI = document.getElementById('hostUI');
 const guestUI = document.getElementById('guestUI');
 
-window.setStatus = function(t) { statusEl.textContent = t; };
-const setStatus = window.setStatus;
+function setStatus(t) { statusEl.textContent = t; }
+function sendMove(data) { if (p2p) p2p.send({ ...data, _g: selectedGame }); }
 function botDelay(fn) { setTimeout(fn, 400); }
 
+// ========== UI LOGIC ==========
 document.querySelectorAll('#menu button').forEach(btn => {
   btn.onclick = () => {
-    if (room) return;
+    if (p2p) return;
     document.querySelectorAll('#menu button').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
     selectedGame = btn.dataset.game;
@@ -472,6 +426,7 @@ function updateSettingsVisibility() {
   const isBS = selectedGame === 'battleship';
   
   levelRow.classList.toggle('hidden', isP2P || isLocal);
+  // Скрываем размер поля, если это НЕ морской бой, ИЛИ если включен P2P
   sizeRow.classList.toggle('hidden', !isBS || isP2P);
   p2pUI.classList.toggle('hidden', !isP2P);
   startBtn.classList.toggle('hidden', isP2P);
@@ -484,6 +439,70 @@ function updateSettingsVisibility() {
   }
 }
 
+document.getElementById('tabHost').onclick = () => {
+  document.getElementById('tabHost').classList.add('active');
+  document.getElementById('tabGuest').classList.remove('active');
+  hostUI.classList.remove('hidden'); guestUI.classList.add('hidden'); isHost = true;
+};
+document.getElementById('tabGuest').onclick = () => {
+  document.getElementById('tabGuest').classList.add('active');
+  document.getElementById('tabHost').classList.remove('active');
+  guestUI.classList.remove('hidden'); hostUI.classList.add('hidden'); isHost = false;
+};
+
+// ========== ЛОГИКА P2P ==========
+document.getElementById('genCodeBtn').onclick = async () => {
+  if (p2p) return;
+  p2p = new ManualP2P();
+  setStatus('Генерация кода...');
+  document.getElementById('genCodeBtn').disabled = true;
+  const code = await p2p.createOffer();
+  document.getElementById('hostCodeOut').value = code;
+  setStatus('Код готов! Отправьте его другу.');
+};
+
+document.getElementById('finishConnBtn').onclick = async () => {
+  const answer = document.getElementById('guestCodeIn').value.trim();
+  if (!answer) return alert('Вставьте ответный код!');
+  setStatus('Установка соединения...');
+  try {
+    await p2p.acceptAnswer(answer);
+    setupGameConnection();
+  } catch(e) { setStatus('Ошибка подключения.'); }
+};
+
+document.getElementById('joinGameBtn').onclick = async () => {
+  const offer = document.getElementById('hostCodeIn').value.trim();
+  if (!offer) return alert('Вставьте код приглашения!');
+  if (p2p) return;
+  p2p = new ManualP2P();
+  setStatus('Генерация ответного кода...');
+  document.getElementById('joinGameBtn').disabled = true;
+  try {
+    const answer = await p2p.acceptOffer(offer);
+    document.getElementById('guestCodeOut').value = answer;
+    setStatus('Ответ готов! Отправьте его хосту.');
+    setupGameConnection();
+  } catch(e) { setStatus('Ошибка. Неверный код.'); }
+};
+
+function setupGameConnection() {
+  p2p.onData = data => {
+    if (data.type === 'start') {
+      startGame(data.game, false, data.bsSize);
+    } else if (currentGame && currentGame.receive) {
+      currentGame.receive(data);
+    }
+  };
+  p2p.onOpen = () => {
+    if (isHost) {
+      p2p.send({ type: 'start', game: selectedGame, bsSize: parseInt(bsSizeSel.value) });
+      startGame(selectedGame, true);
+    }
+  };
+}
+
+// ========== СТАРТ И СБРОС ==========
 startBtn.onclick = () => {
   gameMode = modeSel.value;
   botLevel = levelSel.value;
@@ -494,17 +513,20 @@ startBtn.onclick = () => {
 };
 
 backBtn.onclick = () => {
-  if (room) { room.leave(); room = null; }
+  if (p2p) { p2p.close(); p2p = null; }
   currentGame = null;
   gameAreaEl.innerHTML = '';
   startBtn.classList.remove('hidden');
   backBtn.classList.add('hidden');
   modeSel.disabled = false;
   document.querySelectorAll('#menu button').forEach(b => b.disabled = false);
-  document.getElementById('hostLinkOut').value = '';
-  document.getElementById('genLinkBtn').disabled = false;
+  document.getElementById('hostCodeOut').value = '';
+  document.getElementById('guestCodeIn').value = '';
+  document.getElementById('hostCodeIn').value = '';
+  document.getElementById('guestCodeOut').value = '';
+  document.getElementById('genCodeBtn').disabled = false;
+  document.getElementById('joinGameBtn').disabled = false;
   p2pUI.classList.add('hidden');
-  history.replaceState(null, '', location.pathname); // Очищаем хэш
   const activeBtn = document.querySelector('#menu button.active');
   setStatus(`Выбрано: ${activeBtn ? activeBtn.textContent : 'Игра'}`);
   updateSettingsVisibility();
@@ -528,6 +550,9 @@ function triggerBotIfNeeded() {
   if ((gameMode !== 'bot' && gameMode !== 'championship') || !currentGame || currentGame.done) return;
   botDelay(() => { if (!currentGame.done) currentGame.botMove(); });
 }
+
+// Инициализация при загрузке
+updateSettingsVisibility();
 
 // ========== ИГРЫ ==========
 const TicTacToe = {
@@ -585,7 +610,7 @@ const TicTacToe = {
         else {
           const win = this.board[a] === (isHost ? 'X' : 'O');
           setStatus(win ? 'Вы победили' : 'Вы проиграли');
-          if (gameMode === 'p2p') room.makeAction('gameover')({ result: win ? 'win' : 'lose' });
+          if (gameMode === 'p2p') sendMove({ type: 'gameover', result: win ? 'win' : 'lose' });
           else onGameEnd(win ? 'win' : 'lose', selectedGame, botLevel);
         }
         return true;
@@ -908,7 +933,7 @@ const Connect4 = {
         else {
           const win = color === (isHost ? 'R' : 'Y');
           setStatus(win ? 'Вы победили' : 'Вы проиграли');
-          if(gameMode === 'p2p') room.makeAction('gameover')({ result: win ? 'win' : 'lose' });
+          if(gameMode === 'p2p') sendMove({ type: 'gameover', result: win ? 'win' : 'lose' });
           else onGameEnd(win ? 'win' : 'lose', selectedGame, botLevel);
         }
         return true; 
